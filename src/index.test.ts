@@ -9,7 +9,7 @@ import {
   suffixesWithPrefix,
 } from "./index.ts";
 
-import { assertEquals } from "assert";
+import { assertEquals } from "https://deno.land/std@0.192.0/testing/asserts.ts";
 
 type Func = (...args: any[]) => any;
 

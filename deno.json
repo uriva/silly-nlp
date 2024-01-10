@@ -1,8 +1,5 @@
 {
   "tasks": {
     "build": "deno run -A build_npm.ts"
-  },
-  "imports": {
-    "assert": "https://deno.land/std@0.209.0/assert/mod.ts"
   }
 }
