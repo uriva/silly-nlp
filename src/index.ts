@@ -14,11 +14,10 @@ import {
   take,
   trim,
 } from "https://deno.land/x/gamla@39.0.0/src/index.ts";
-import allEnglishWords from "npm:an-array-of-english-words";
 
 import { fuzzySearch as fs } from "npm:levenshtein-search";
 import { stopWords } from "./stopWords.ts";
-
+import { englishWords } from "./englishWords.ts";
 export type FuzzyMatch = { start: number; end: number };
 
 export const fuzzySearch = (
@@ -188,7 +187,7 @@ export const simplify: (x: string) => string = pipe(
   (x: string) => x.trim(),
 );
 
-const allEnglishWordsAsSet = new Set(allEnglishWords);
+const allEnglishWordsAsSet = new Set(englishWords);
 
 const fixMissingSpaceInOneWord = (x: string) =>
   allEnglishWordsAsSet.has(x)

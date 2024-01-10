@@ -11,12 +11,19 @@ import {
 
 import { assertEquals } from "assert";
 
+type Func = (...args: any[]) => any;
+
 const testFn =
-  <F extends (...args: any[]) => any>(name: string, f: F) =>
+  <F extends Func>(name: string, f: F) =>
   (cases: [Parameters<F>, ReturnType<F>][]) =>
     Deno.test(name, () =>
       cases.forEach(([args, result]) => assertEquals(f(...args), result)),
     );
+
+const testUnaryFn =
+  <F extends Func>(name: string, f: F) =>
+  (cases: [Parameters<F>[0], ReturnType<F>][]) =>
+    testFn(name, f)(cases.map(([x, y]) => [[x] as Parameters<F>, y]));
 
 testFn(
   "prefixesWithSuffix",
@@ -46,30 +53,41 @@ testFn(
 ]);
 
 Deno.test("suffixesWithPrefix", () =>
-  assertEquals(suffixesWithPrefix(/from\s+/gi, "from the matrix")).toEqual([
+  assertEquals(suffixesWithPrefix(/from\s+/gi, "from the matrix"), [
     "the matrix",
   ]),
 );
 
-expect(
-  capitalizedSuffix(
-    "Uncle Ben : Remember, with great power comes great responsibility (scene) - Spider-Man",
-  ),
-).toEqual("Spider-Man");
+Deno.test("capitalizedSuffix", () => {
+  assertEquals(
+    capitalizedSuffix(
+      "Uncle Ben : Remember, with great power comes great responsibility (scene) - Spider-Man",
+    ),
+    "Spider-Man",
+  );
+});
+Deno.test("capitalizedPrefix", () => {
+  assertEquals(
+    capitalizedPrefix(
+      "Jerry Maguire with a subscription on Peacock, rent on Amazon Prime Video, Vudu, Apple TV, or buy on Amazon Prime Video, Vudu, Apple TV.",
+    ),
+    "Jerry Maguire",
+  );
+});
 
-expect(
-  capitalizedPrefix(
-    "Jerry Maguire with a subscription on Peacock, rent on Amazon Prime Video, Vudu, Apple TV, or buy on Amazon Prime Video, Vudu, Apple TV.",
-  ),
-).toEqual("Jerry Maguire");
+Deno.test("quotedTexts", () => {
+  assertEquals(
+    quotedTexts(
+      'the movie "the matrix" is pretty good i remember the quote "i know kung fu"',
+    ),
+    ["the matrix", "i know kung fu"],
+  );
+});
 
-expect(
-  quotedTexts(
-    'the movie "the matrix" is pretty good i remember the quote "i know kung fu"',
-  ),
-).toEqual(["the matrix", "i know kung fu"]);
-
-testFn(approximateSemanticEquality)([
+testFn(
+  "approximateSemanticEquality",
+  approximateSemanticEquality,
+)([
   [["Snow White and theSeven Dwarfs", "Snow White and the Seven Dwarfs"], true],
   [
     [
@@ -84,7 +102,10 @@ testFn(approximateSemanticEquality)([
   [["a name", "a name with more words"], false],
 ]);
 
-testUnaryFn(cleanSpeakers)([
+testUnaryFn(
+  "cleanSpeakers",
+  cleanSpeakers,
+)([
   [
     "Han Solo :  Uh, everything's under control. Situation normal. Voice : What happened? Han Solo :  Uh, we had a slight weapons malfunction, but uh... everything's perfectly all right now. We're fine. We're all fine here now, thank you. How are you? Voice : We're sending a squad up. Han Solo : Uh, uh... negative, negative. We had a reactor leak here now. Give us a few minutes to lock it down. Large leak, very dangerous. Voice : Who is this? What's your operating number? Han Solo : Uh...  Han Solo :  Boring conversation anyway. LUKE, WE'RE GONNA HAVE COMPANY!",
     "Uh, everything's under control. Situation normal. What happened? Uh, we had a slight weapons malfunction, but uh... everything's perfectly all right now. We're fine. We're all fine here now, thank you. How are you? We're sending a squad up. Uh, uh... negative, negative. We had a reactor leak here now. Give us a few minutes to lock it down. Large leak, very dangerous. Who is this? What's your operating number? Uh... Boring conversation anyway. LUKE, WE'RE GONNA HAVE COMPANY!",
@@ -99,7 +120,10 @@ testUnaryFn(cleanSpeakers)([
   ],
 ]);
 
-testUnaryFn(ngramsOfAtLeastNWords(2))([
+testUnaryFn(
+  "ngramsOfAtLeastNWords",
+  ngramsOfAtLeastNWords(2),
+)([
   [
     "hello this is dog",
     [
