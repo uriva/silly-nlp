@@ -6,6 +6,7 @@ import {
   ngramsOfAtLeastNWords,
   prefixesWithSuffix,
   quotedTexts,
+  someKewyordMatches,
   suffixesWithPrefix,
 } from "./index.ts";
 
@@ -24,6 +25,11 @@ const testUnaryFn =
   <F extends Func>(name: string, f: F) =>
   (cases: [Parameters<F>[0], ReturnType<F>][]) =>
     testFn(name, f)(cases.map(([x, y]) => [[x] as Parameters<F>, y]));
+
+testUnaryFn(
+  "someKewyordMatches",
+  someKewyordMatches(["בדסמ"]),
+)([["חוזרים ליסודות בהרצאת “מבוא לבדסמ” במענטש, ב-15/01/24", true]]);
 
 testFn(
   "prefixesWithSuffix",

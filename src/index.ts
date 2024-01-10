@@ -16,8 +16,8 @@ import {
 } from "https://deno.land/x/gamla@39.0.0/src/index.ts";
 
 import { fuzzySearch as fs } from "npm:levenshtein-search";
-import { stopWords } from "./stopWords.ts";
 import { englishWords } from "./englishWords.ts";
+import { stopWords } from "./stopWords.ts";
 export type FuzzyMatch = { start: number; end: number };
 
 export const fuzzySearch = (
@@ -285,7 +285,7 @@ const personName = [zeroOrMore(/'?[A-Z]\w*\.?'?\s/), /\w+/].reduce(
 
 const hyphen = /[―-]/;
 
-const boundry = [/[@.-\s:/בה[\]?&%$#=*,!()]/, /^/, /$/].reduce(regExpOr); // \b doesn't work for non ascii
+const boundry = [/[@.-\s:/בלה[\]?&%$#=*,!()]/, /^/, /$/].reduce(regExpOr); // \b doesn't work for non ascii
 
 const speaker = globalize(
   [boundry, optional(hyphen), personName, /\s?:/, boundry].reduce(concatRegexp),
