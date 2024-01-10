@@ -1,4 +1,4 @@
-import { build, emptyDir } from "https://deno.land/x/dnt@0.33.1/mod.ts";
+import { build, emptyDir } from "https://deno.land/x/dnt@0.39.0/mod.ts";
 
 const outDir = "./dist";
 
@@ -7,6 +7,7 @@ await emptyDir(outDir);
 await build({
   entryPoints: ["./src/index.ts"],
   outDir,
+  typeCheck: false,
   shims: { deno: true },
   mappings: {
     "https://deno.land/x/gamla@39.0.0/src/index.ts": {
