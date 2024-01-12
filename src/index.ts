@@ -279,7 +279,7 @@ export const oneOrMore = (x: RegExp) =>
   new RegExp(`${bracketIfNeeded(x.source)}+`, x.flags);
 export const globalize = addFlag("g");
 
-const personName = [zeroOrMore(/'?[A-Z]\w*\.?'?\s/), /\w+/].reduce(
+const personName = [zeroOrMore(/'?[A-Z][\w-]*\.?'?\s/), /[\w-]+/].reduce(
   concatRegexp,
 );
 

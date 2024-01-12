@@ -113,6 +113,10 @@ testUnaryFn(
   cleanSpeakers,
 )([
   [
+    `Ant-Man :  Oh, you're going to have to take this to the shop. Iron Man : Who's speaking? Ant-Man : It's your conscience. We don't talk a lot these days.`,
+    `Oh, you're going to have to take this to the shop. Who's speaking? It's your conscience. We don't talk a lot these days.`,
+  ],
+  [
     "Han Solo :  Uh, everything's under control. Situation normal. Voice : What happened? Han Solo :  Uh, we had a slight weapons malfunction, but uh... everything's perfectly all right now. We're fine. We're all fine here now, thank you. How are you? Voice : We're sending a squad up. Han Solo : Uh, uh... negative, negative. We had a reactor leak here now. Give us a few minutes to lock it down. Large leak, very dangerous. Voice : Who is this? What's your operating number? Han Solo : Uh...  Han Solo :  Boring conversation anyway. LUKE, WE'RE GONNA HAVE COMPANY!",
     "Uh, everything's under control. Situation normal. What happened? Uh, we had a slight weapons malfunction, but uh... everything's perfectly all right now. We're fine. We're all fine here now, thank you. How are you? We're sending a squad up. Uh, uh... negative, negative. We had a reactor leak here now. Give us a few minutes to lock it down. Large leak, very dangerous. Who is this? What's your operating number? Uh... Boring conversation anyway. LUKE, WE'RE GONNA HAVE COMPANY!",
   ],
