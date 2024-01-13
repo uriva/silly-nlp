@@ -6,6 +6,7 @@ import {
   ngramsOfAtLeastNWords,
   prefixesWithSuffix,
   quotedTexts,
+  simplify,
   someKewyordMatches,
   suffixesWithPrefix,
 } from "./index.ts";
@@ -146,3 +147,5 @@ testUnaryFn(
     ],
   ],
 ]);
+
+testUnaryFn("simplify", simplify)([["M*A*S*H", "mash"]]);

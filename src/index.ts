@@ -179,7 +179,7 @@ export const simplify: (x: string) => string = pipe(
   replace(/\s/g, " "),
   replaceDidgitNames,
   replace(/\[.*\]/, ""),
-  replace(/[:'"♪]/g, ""),
+  replace(/[*:'"♪]/g, ""),
   replace(/[,.?!\n-]/g, " "),
   replace(/\s+/g, " "),
   replace(/<\/?i>/g, ""),
