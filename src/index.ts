@@ -3,6 +3,7 @@ import {
   join,
   letIn,
   lowercase,
+  map,
   max,
   nonempty,
   pipe,
@@ -18,6 +19,7 @@ import {
 import { fuzzySearch as fs } from "npm:levenshtein-search";
 import { englishWords } from "./englishWords.ts";
 import { stopWords } from "./stopWords.ts";
+import { trimWhitesapce } from "https://deno.land/x/gamla@39.0.0/src/string.ts";
 export type FuzzyMatch = { start: number; end: number };
 
 export const fuzzySearch = (
@@ -293,14 +295,21 @@ const speaker = globalize(
 
 const speakerInEnd = [hyphen, /\s*/, personName, /$/].reduce(concatRegexp);
 
+const splitSentences = split(/(?=[!.])/);
+
 export const cleanSpeakers = pipe(
-  replace(/\n/g, " "),
-  split(speaker),
-  join(" "),
-  replace(/\s+/g, " "),
+  splitSentences,
+  map(
+    pipe(
+      split(speaker),
+      join(" "),
+      replace(/\s+/g, " "),
+      replace(/"/g, ""),
+      trimWhitesapce,
+    ),
+  ),
+  join(""),
   replace(speakerInEnd, ""),
-  replace(/"/g, ""),
-  (x: string) => x.trim(),
 );
 
 export const ngramsOfAtLeastNWords = (n: number) => (s: string) => {

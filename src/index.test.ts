@@ -114,6 +114,10 @@ testUnaryFn(
   cleanSpeakers,
 )([
   [
+    "Rachel : See? Unisex. Joey : Maybe *you* need sex. I just had it a few days ago. Rachel : No, Joey, U-N-I-sex. Joey : I wouldn't say no to that.",
+    "See? Unisex. Maybe *you* need sex. I just had it a few days ago. No, Joey, U-N-I-sex. I wouldn't say no to that.",
+  ],
+  [
     `Ant-Man :  Oh, you're going to have to take this to the shop. Iron Man : Who's speaking? Ant-Man : It's your conscience. We don't talk a lot these days.`,
     `Oh, you're going to have to take this to the shop. Who's speaking? It's your conscience. We don't talk a lot these days.`,
   ],
