@@ -18,8 +18,8 @@ type Func = (...args: any[]) => any;
 const testFn =
   <F extends Func>(name: string, f: F) =>
   (cases: [Parameters<F>, ReturnType<F>][]) =>
-    Deno.test(name, () =>
-      cases.forEach(([args, result]) => assertEquals(f(...args), result)),
+    cases.forEach(([args, result]) =>
+      Deno.test(name, () => assertEquals(f(...args), result)),
     );
 
 const testUnaryFn =
@@ -113,6 +113,10 @@ testUnaryFn(
   "cleanSpeakers",
   cleanSpeakers,
 )([
+  [
+    "Mr. Collins : Charlotte, come here. Charlotte Lucas : Has the pig escaped again?  Charlotte Lucas : Oh. It's Lady Catherine.",
+    "Charlotte, come here. Has the pig escaped again? Oh. It's Lady Catherine.",
+  ],
   [
     "Rachel : See? Unisex. Joey : Maybe *you* need sex. I just had it a few days ago. Rachel : No, Joey, U-N-I-sex. Joey : I wouldn't say no to that.",
     "See? Unisex. Maybe *you* need sex. I just had it a few days ago. No, Joey, U-N-I-sex. I wouldn't say no to that.",

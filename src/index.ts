@@ -14,12 +14,12 @@ import {
   split,
   take,
   trim,
-} from "https://deno.land/x/gamla@39.0.0/src/index.ts";
+  trimWhitespace,
+} from "https://deno.land/x/gamla@43.0.0/src/index.ts";
 
 import { fuzzySearch as fs } from "npm:levenshtein-search";
 import { englishWords } from "./englishWords.ts";
 import { stopWords } from "./stopWords.ts";
-import { trimWhitesapce } from "https://deno.land/x/gamla@39.0.0/src/string.ts";
 export type FuzzyMatch = { start: number; end: number };
 
 export const fuzzySearch = (
@@ -305,7 +305,7 @@ export const cleanSpeakers = pipe(
       join(" "),
       replace(/\s+/g, " "),
       replace(/"/g, ""),
-      trimWhitesapce,
+      trimWhitespace,
     ),
   ),
   join(""),
