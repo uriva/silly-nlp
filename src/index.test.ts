@@ -118,6 +118,10 @@ testUnaryFn(
   cleanSpeakers,
 )([
   [
+    "Roy 'Tin Cup' McAvoy : Sex and golf are the two things you don't have to be good at to enjoy",
+    "Sex and golf are the two things you don't have to be good at to enjoy",
+  ],
+  [
     "Mr. Darcy: You must know... surely, you must know it was all for you. You are too generous to trifle with me. I believe you spoke with my aunt last night, and it has taught me to hope as I'd scarcely allowed myself before. If your feelings are still what they were last April, tell me so at once. My affections and wishes have not changed, but one word from you will silence me forever. If, however, your feelings have changed, I will have to tell you: you have bewitched me, body and soul, and I love--I love--I love you. I never wish to be parted from you from this day on.",
     "You must know... surely, you must know it was all for you. You are too generous to trifle with me. I believe you spoke with my aunt last night, and it has taught me to hope as I'd scarcely allowed myself before. If your feelings are still what they were last April, tell me so at once. My affections and wishes have not changed, but one word from you will silence me forever. If, however, your feelings have changed, I will have to tell you: you have bewitched me, body and soul, and I love--I love--I love you. I never wish to be parted from you from this day on.",
   ],

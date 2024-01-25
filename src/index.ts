@@ -298,7 +298,7 @@ const speakerTitle = [/ms\./, /mrs\./, /mr\./, /dr\./]
 
 const personName = [
   optional(concatRegexp(speakerTitle, /\s/)),
-  regexpTimes(0, 2, /'?[A-Z][\w-]*\.?'?\s/),
+  regexpTimes(0, 4, /'?[A-Z][\w-]*\.?'?\s/),
   /[\w-]+/,
 ].reduce(concatRegexp);
 
