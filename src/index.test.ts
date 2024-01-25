@@ -1,3 +1,6 @@
+import { sideLog } from "https://deno.land/x/gamla@43.0.0/src/debug.ts";
+import { regexpTimes } from "./index.ts";
+import { matchesRegexp } from "./index.ts";
 import {
   approximateSemanticEquality,
   capitalizedPrefix,
@@ -12,6 +15,7 @@ import {
 } from "./index.ts";
 
 import { assertEquals } from "https://deno.land/std@0.192.0/testing/asserts.ts";
+import { regexpEntireString } from "./index.ts";
 
 type Func = (...args: any[]) => any;
 
@@ -114,6 +118,10 @@ testUnaryFn(
   cleanSpeakers,
 )([
   [
+    "Mr. Darcy: You must know... surely, you must know it was all for you. You are too generous to trifle with me. I believe you spoke with my aunt last night, and it has taught me to hope as I'd scarcely allowed myself before. If your feelings are still what they were last April, tell me so at once. My affections and wishes have not changed, but one word from you will silence me forever. If, however, your feelings have changed, I will have to tell you: you have bewitched me, body and soul, and I love--I love--I love you. I never wish to be parted from you from this day on.",
+    "You must know... surely, you must know it was all for you. You are too generous to trifle with me. I believe you spoke with my aunt last night, and it has taught me to hope as I'd scarcely allowed myself before. If your feelings are still what they were last April, tell me so at once. My affections and wishes have not changed, but one word from you will silence me forever. If, however, your feelings have changed, I will have to tell you: you have bewitched me, body and soul, and I love--I love--I love you. I never wish to be parted from you from this day on.",
+  ],
+  [
     "Mr. Collins : Charlotte, come here. Charlotte Lucas : Has the pig escaped again?  Charlotte Lucas : Oh. It's Lady Catherine.",
     "Charlotte, come here. Has the pig escaped again? Oh. It's Lady Catherine.",
   ],
@@ -131,11 +139,11 @@ testUnaryFn(
   ],
   [
     'Jake Sully: Neytiri calls me skxawng. It means "moron."',
-    "Neytiri calls me skxawng. It means moron.",
+    'Neytiri calls me skxawng. It means "moron."',
   ],
   [
     '"Jesus! Did I SAY that? Or just think it? Was I talking? Did they hear me? I glanced over at my attorney, but he seemed oblivious…"― Hunter S. Thompson',
-    "Jesus! Did I SAY that? Or just think it? Was I talking? Did they hear me? I glanced over at my attorney, but he seemed oblivious…",
+    '"Jesus! Did I SAY that? Or just think it? Was I talking? Did they hear me? I glanced over at my attorney, but he seemed oblivious…"',
   ],
 ]);
 
@@ -157,3 +165,11 @@ testUnaryFn(
 ]);
 
 testUnaryFn("simplify", simplify)([["M*A*S*H", "mash"]]);
+
+testUnaryFn(
+  "times",
+  matchesRegexp(regexpEntireString(regexpTimes(1, 3, /a/))),
+)([
+  ["aa", true],
+  ["aaaa", false],
+]);

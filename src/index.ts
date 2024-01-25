@@ -3,7 +3,6 @@ import {
   join,
   letIn,
   lowercase,
-  map,
   max,
   nonempty,
   pipe,
@@ -17,6 +16,7 @@ import {
   trimWhitespace,
 } from "https://deno.land/x/gamla@43.0.0/src/index.ts";
 
+import { remove } from "https://deno.land/x/gamla@43.0.0/src/filter.ts";
 import { fuzzySearch as fs } from "npm:levenshtein-search";
 import { englishWords } from "./englishWords.ts";
 import { stopWords } from "./stopWords.ts";
@@ -241,6 +241,9 @@ export const quotedTexts = (input: string): string[] => {
 export const concatRegexp = (x: RegExp, y: RegExp) =>
   new RegExp(x.source + y.source, combineFlags(x, y));
 
+export const regexpEntireString = (x: RegExp) =>
+  new RegExp(`^${x.source}$`, x.flags);
+
 const combineFlags = (x: RegExp, y: RegExp) =>
   (x.flags + y.flags)
     .split("")
@@ -286,13 +289,16 @@ export const oneOrMore = (x: RegExp) =>
 
 export const globalize = addFlag("g");
 
+export const regexpTimes = (min: number, max: number, x: RegExp) =>
+  new RegExp(`${bracketIfNeeded(x.source)}{${min},${max}}`, x.flags);
+
 const speakerTitle = [/ms\./, /mrs\./, /mr\./, /dr\./]
   .map(caseInsensitive)
   .reduce(regExpOr);
 
 const personName = [
   optional(concatRegexp(speakerTitle, /\s/)),
-  zeroOrMore(/'?[A-Z][\w-]*\.?'?\s/),
+  regexpTimes(0, 2, /'?[A-Z][\w-]*\.?'?\s/),
   /[\w-]+/,
 ].reduce(concatRegexp);
 
@@ -300,8 +306,8 @@ const hyphen = /[―-]/;
 
 const boundry = [/[@.-\s:/בלה[\]?&%$#=*,!()]/, /^/, /$/].reduce(regExpOr); // \b doesn't work for non ascii
 
-const speaker = globalize(
-  [boundry, optional(hyphen), personName, /\s?:/, boundry].reduce(concatRegexp),
+const speaker = [optional(hyphen), personName, /\s?:/, boundry].reduce(
+  concatRegexp,
 );
 
 const speakerInEnd = [hyphen, /\s*/, personName, /$/].reduce(concatRegexp);
@@ -309,21 +315,17 @@ const speakerInEnd = [hyphen, /\s*/, personName, /$/].reduce(concatRegexp);
 export const negativeLookBehind = (x: RegExp) =>
   new RegExp(`(?<!${x.source})`, x.flags);
 
-const splitSentences = split(/(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=[.?])\s/);
+const splitSentences = split(/(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=[,.?:])\s/);
+
+export const matchesRegexp = (r: RegExp) => (txt: string) => r.test(txt);
 
 export const cleanSpeakers = pipe(
   splitSentences,
-  map(
-    pipe(
-      split(speaker),
-      join(" "),
-      replace(/\s+/g, " "),
-      replace(/"/g, ""),
-      trimWhitespace,
-    ),
-  ),
+  remove(pipe(trimWhitespace, matchesRegexp(regexpEntireString(speaker)))),
   join(" "),
+  replace(/\s+/g, " "),
   replace(speakerInEnd, ""),
+  trimWhitespace,
 );
 
 export const ngramsOfAtLeastNWords = (n: number) => (s: string) => {
