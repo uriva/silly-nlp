@@ -261,7 +261,10 @@ export const stringToRegexp = (x: string) =>
 export const caseInsensitive = addFlag("i");
 
 export const regExpOr = (x: RegExp, y: RegExp) =>
-  new RegExp(`(?:${x.source}|${y.source})`, combineFlags(x, y));
+  new RegExp(
+    `(?:${bracketIfNeeded(x.source)}|${bracketIfNeeded(y.source)})`,
+    combineFlags(x, y),
+  );
 
 export const selectionGroup = (x: RegExp) =>
   new RegExp(`(${x.source})`, x.flags);
@@ -277,13 +280,21 @@ const optional = (x: RegExp) =>
 
 export const zeroOrMore = (x: RegExp) =>
   new RegExp(`${bracketIfNeeded(x.source)}*`, x.flags);
+
 export const oneOrMore = (x: RegExp) =>
   new RegExp(`${bracketIfNeeded(x.source)}+`, x.flags);
+
 export const globalize = addFlag("g");
 
-const personName = [zeroOrMore(/'?[A-Z][\w-]*\.?'?\s/), /[\w-]+/].reduce(
-  concatRegexp,
-);
+const speakerTitle = [/ms\./, /mrs\./, /mr\./, /dr\./]
+  .map(caseInsensitive)
+  .reduce(regExpOr);
+
+const personName = [
+  optional(concatRegexp(speakerTitle, /\s/)),
+  zeroOrMore(/'?[A-Z][\w-]*\.?'?\s/),
+  /[\w-]+/,
+].reduce(concatRegexp);
 
 const hyphen = /[―-]/;
 
@@ -295,7 +306,10 @@ const speaker = globalize(
 
 const speakerInEnd = [hyphen, /\s*/, personName, /$/].reduce(concatRegexp);
 
-const splitSentences = split(/(?=[!.])/);
+export const negativeLookBehind = (x: RegExp) =>
+  new RegExp(`(?<!${x.source})`, x.flags);
+
+const splitSentences = split(/(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=[.?])\s/);
 
 export const cleanSpeakers = pipe(
   splitSentences,
@@ -308,7 +322,7 @@ export const cleanSpeakers = pipe(
       trimWhitespace,
     ),
   ),
-  join(""),
+  join(" "),
   replace(speakerInEnd, ""),
 );
 
