@@ -118,6 +118,10 @@ testUnaryFn(
   cleanSpeakers,
 )([
   [
+    "Anthony 'Tony' Soprano Sr. : You know where I was yesterday when you called? Dr Jennifer Melfi : I don't know. Anthony 'Tony' Soprano Sr. : I was outside a whorehouse, while a guy that works for me was inside beating the shit out of a guy that owes me money. Broke his arm. Put a bullet in his kneecap. Dr Jennifer Melfi : How'd that make you feel? Anthony 'Tony' Soprano Sr. : Wished it was me in there. Dr Jennifer Melfi : Giving the beating or taking it?",
+    "You know where I was yesterday when you called? I don't know. I was outside a whorehouse, while a guy that works for me was inside beating the shit out of a guy that owes me money. Broke his arm. Put a bullet in his kneecap. How'd that make you feel? Wished it was me in there. Giving the beating or taking it?",
+  ],
+  [
     "Neil Clarke : I can do ANYTHING! Okay... bu... but... what do I *really* want?  Neil Clarke : GIVE ME A REALLY BIG DICK!  Neil Clarke : Augh! ouch! NOT *THAT* BIG! Obviously! Dick, return to your old size!  Neil Clarke : Agh! Ah... Ok. Um... Let me have a penis that women find exciting!  Neil Clarke : Yeah, it's good, yeah. Could I have it white?",
     "I can do ANYTHING! Okay... bu... but... what do I *really* want? GIVE ME A REALLY BIG DICK! Augh! ouch! NOT *THAT* BIG! Obviously! Dick, return to your old size! Agh! Ah... Ok. Um... Let me have a penis that women find exciting! Yeah, it's good, yeah. Could I have it white?",
   ],

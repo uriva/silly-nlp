@@ -2,6 +2,7 @@ import {
   includedIn,
   join,
   letIn,
+  logAround,
   lowercase,
   max,
   nonempty,
@@ -9,6 +10,7 @@ import {
   range,
   replace,
   reverse,
+  sideLog,
   sort,
   split,
   take,
@@ -292,14 +294,20 @@ export const globalize = addFlag("g");
 export const regexpTimes = (min: number, max: number, x: RegExp) =>
   new RegExp(`${bracketIfNeeded(x.source)}{${min},${max}}`, x.flags);
 
-const speakerTitle = [/ms\./, /mrs\./, /mr\./, /dr\./]
+const namePrefix = ["ms", "mrs", "mr", "dr", "prof"]
+  .map((x) => new RegExp(`${x}\\.?`))
+  .map(caseInsensitive)
+  .reduce(regExpOr);
+
+const nameSuffix = ["sr", "jr"]
+  .map((x) => new RegExp(`${x}\\.?`))
   .map(caseInsensitive)
   .reduce(regExpOr);
 
 const personName = [
-  optional(concatRegexp(speakerTitle, /\s/)),
+  optional(concatRegexp(namePrefix, /\s/)),
   regexpTimes(0, 4, /'?[A-Z][\w-]*\.?'?\s/),
-  /[\w-]+/,
+  regExpOr(/[\w-]+/, concatRegexp(nameSuffix, /\s/)),
 ].reduce(concatRegexp);
 
 const hyphen = /[―-]/;
