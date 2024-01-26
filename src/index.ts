@@ -315,7 +315,7 @@ const speakerInEnd = [hyphen, /\s*/, personName, /$/].reduce(concatRegexp);
 export const negativeLookBehind = (x: RegExp) =>
   new RegExp(`(?<!${x.source})`, x.flags);
 
-const splitSentences = split(/(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=[,.?:])\s/);
+const splitSentences = split(/(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=[,!.?:])\s/);
 
 export const matchesRegexp = (r: RegExp) => (txt: string) => r.test(txt);
 

@@ -118,6 +118,10 @@ testUnaryFn(
   cleanSpeakers,
 )([
   [
+    "Neil Clarke : I can do ANYTHING! Okay... bu... but... what do I *really* want?  Neil Clarke : GIVE ME A REALLY BIG DICK!  Neil Clarke : Augh! ouch! NOT *THAT* BIG! Obviously! Dick, return to your old size!  Neil Clarke : Agh! Ah... Ok. Um... Let me have a penis that women find exciting!  Neil Clarke : Yeah, it's good, yeah. Could I have it white?",
+    "I can do ANYTHING! Okay... bu... but... what do I *really* want? GIVE ME A REALLY BIG DICK! Augh! ouch! NOT *THAT* BIG! Obviously! Dick, return to your old size! Agh! Ah... Ok. Um... Let me have a penis that women find exciting! Yeah, it's good, yeah. Could I have it white?",
+  ],
+  [
     "Roy 'Tin Cup' McAvoy : Sex and golf are the two things you don't have to be good at to enjoy",
     "Sex and golf are the two things you don't have to be good at to enjoy",
   ],
