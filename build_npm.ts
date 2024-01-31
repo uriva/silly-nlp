@@ -24,9 +24,7 @@ await build({
       type: "git",
       url: "git+https://github.com/uriva/silly-nlp.git",
     },
-    bugs: {
-      url: "https://github.com/uriva/silly-nlp/issues",
-    },
+    bugs: { url: "https://github.com/uriva/silly-nlp/issues" },
   },
   postBuild() {
     Deno.copyFileSync("./LICENSE", outDir + "/LICENSE");

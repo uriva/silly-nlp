@@ -1,14 +1,13 @@
-import { sideLog } from "https://deno.land/x/gamla@43.0.0/src/debug.ts";
-import { regexpTimes } from "./index.ts";
-import { matchesRegexp } from "./index.ts";
 import {
   approximateSemanticEquality,
   capitalizedPrefix,
   capitalizedSuffix,
   cleanSpeakers,
+  matchesRegexp,
   ngramsOfAtLeastNWords,
   prefixesWithSuffix,
   quotedTexts,
+  regexpTimes,
   simplify,
   someKewyordMatches,
   suffixesWithPrefix,
@@ -23,7 +22,7 @@ const testFn =
   <F extends Func>(name: string, f: F) =>
   (cases: [Parameters<F>, ReturnType<F>][]) =>
     cases.forEach(([args, result]) =>
-      Deno.test(name, () => assertEquals(f(...args), result)),
+      Deno.test(name, () => assertEquals(f(...args), result))
     );
 
 const testUnaryFn =
@@ -66,8 +65,7 @@ testFn(
 Deno.test("suffixesWithPrefix", () =>
   assertEquals(suffixesWithPrefix(/from\s+/gi, "from the matrix"), [
     "the matrix",
-  ]),
-);
+  ]));
 
 Deno.test("capitalizedSuffix", () => {
   assertEquals(

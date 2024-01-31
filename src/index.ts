@@ -101,8 +101,7 @@ export const suffixesWithPrefix = (regex: RegExp, input: string) =>
   regExpLocations(regex, input).map(({ end }) => input.slice(end));
 
 export const majority =
-  (equivalence: (str: string) => string) =>
-  (elements: string[]): string => {
+  (equivalence: (str: string) => string) => (elements: string[]): string => {
     const counts: Record<string, number> = {};
     const original: Record<string, string> = {};
     for (const element of elements) {
@@ -194,17 +193,15 @@ export const simplify: (x: string) => string = pipe(
 const allEnglishWordsAsSet = new Set(englishWords);
 
 const fixMissingSpaceInOneWord = (x: string) =>
-  allEnglishWordsAsSet.has(x)
-    ? x
-    : letIn(
-        range(1, x.length - 1).find(
-          (index) =>
-            allEnglishWordsAsSet.has(x.slice(0, index)) &&
-            allEnglishWordsAsSet.has(x.slice(index)),
-        ),
-        (location) =>
-          location ? [x.slice(0, location), x.slice(location)].join(" ") : x,
-      );
+  allEnglishWordsAsSet.has(x) ? x : letIn(
+    range(1, x.length - 1).find(
+      (index) =>
+        allEnglishWordsAsSet.has(x.slice(0, index)) &&
+        allEnglishWordsAsSet.has(x.slice(index)),
+    ),
+    (location) =>
+      location ? [x.slice(0, location), x.slice(location)].join(" ") : x,
+  );
 
 const missingSpace = (x: string) =>
   x.split(/\s/).map(fixMissingSpaceInOneWord).join(" ");
@@ -276,7 +273,7 @@ export const selectionGroup = (x: RegExp) =>
 
 const bracketIfNeeded = (s: string) =>
   (s.startsWith("(") && s.endsWith(")")) ||
-  (s.startsWith("[") && s.endsWith("]"))
+    (s.startsWith("[") && s.endsWith("]"))
     ? s
     : `(?:${s})`;
 
@@ -312,7 +309,7 @@ const personName = [
 
 const hyphen = /[―-]/;
 
-const boundry = [/[@.-\s:/בלה[\]?&%$#=*,!()]/, /^/, /$/].reduce(regExpOr); // \b doesn't work for non ascii
+const boundry = [/[_@.-\s:/בלה[\]?&%$#=*,!()]/, /^/, /$/].reduce(regExpOr); // \b doesn't work for non ascii
 
 const speaker = [optional(hyphen), personName, /\s?:/, boundry].reduce(
   concatRegexp,
