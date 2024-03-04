@@ -277,7 +277,7 @@ const bracketIfNeeded = (s: string) =>
     ? s
     : `(?:${s})`;
 
-const optional = (x: RegExp) =>
+export const optional = (x: RegExp) =>
   new RegExp(`${bracketIfNeeded(x.source)}?`, x.flags);
 
 export const zeroOrMore = (x: RegExp) =>

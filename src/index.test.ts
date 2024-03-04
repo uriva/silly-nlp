@@ -7,6 +7,7 @@ import {
   ngramsOfAtLeastNWords,
   prefixesWithSuffix,
   quotedTexts,
+  regexpEntireString,
   regexpTimes,
   simplify,
   someKewyordMatches,
@@ -14,8 +15,8 @@ import {
 } from "./index.ts";
 
 import { assertEquals } from "https://deno.land/std@0.192.0/testing/asserts.ts";
-import { regexpEntireString } from "./index.ts";
 
+// deno-lint-ignore no-explicit-any
 type Func = (...args: any[]) => any;
 
 const testFn =
