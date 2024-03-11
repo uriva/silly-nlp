@@ -240,8 +240,8 @@ export const quotedTexts = (input: string): string[] => {
 export const concatRegexp = (x: RegExp, y: RegExp) =>
   new RegExp(x.source + y.source, combineFlags(x, y));
 
-export const regexpEntireString = (x: RegExp) =>
-  new RegExp(`^${x.source}$`, x.flags);
+export const regexpEntireString = ({ source, flags }: RegExp) =>
+  new RegExp(`^${source}$`, flags);
 
 const combineFlags = (x: RegExp, y: RegExp) =>
   (x.flags + y.flags)
@@ -249,12 +249,11 @@ const combineFlags = (x: RegExp, y: RegExp) =>
     .sort()
     .join("")
     .replace(/(.)(?=.*\1)/g, "");
-const addFlag = (flag: string) => (x: RegExp) =>
+
+const addFlag = (flag: string) => ({ source, flags }: RegExp) =>
   new RegExp(
-    x.source,
-    x.flags.includes(flag)
-      ? x.flags
-      : (x.flags + flag).split("").sort().join(""),
+    source,
+    flags.includes(flag) ? flags : (flags + flag).split("").sort().join(""),
   );
 
 export const stringToRegexp = (x: string) =>
@@ -268,8 +267,8 @@ export const regExpOr = (x: RegExp, y: RegExp) =>
     combineFlags(x, y),
   );
 
-export const selectionGroup = (x: RegExp) =>
-  new RegExp(`(${x.source})`, x.flags);
+export const selectionGroup = ({ source, flags }: RegExp) =>
+  new RegExp(`(${source})`, flags);
 
 const bracketIfNeeded = (s: string) =>
   (s.startsWith("(") && s.endsWith(")")) ||
@@ -277,19 +276,22 @@ const bracketIfNeeded = (s: string) =>
     ? s
     : `(?:${s})`;
 
-export const optional = (x: RegExp) =>
-  new RegExp(`${bracketIfNeeded(x.source)}?`, x.flags);
+export const optional = ({ source, flags }: RegExp) =>
+  new RegExp(`${bracketIfNeeded(source)}?`, flags);
 
-export const zeroOrMore = (x: RegExp) =>
-  new RegExp(`${bracketIfNeeded(x.source)}*`, x.flags);
+export const zeroOrMore = ({ source, flags }: RegExp) =>
+  new RegExp(`${bracketIfNeeded(source)}*`, flags);
 
-export const oneOrMore = (x: RegExp) =>
-  new RegExp(`${bracketIfNeeded(x.source)}+`, x.flags);
+export const oneOrMore = ({ source, flags }: RegExp) =>
+  new RegExp(`${bracketIfNeeded(source)}+`, flags);
 
 export const globalize = addFlag("g");
 
-export const regexpTimes = (min: number, max: number, x: RegExp) =>
-  new RegExp(`${bracketIfNeeded(x.source)}{${min},${max}}`, x.flags);
+export const regexpTimes = (
+  min: number,
+  max: number,
+  { source, flags }: RegExp,
+) => new RegExp(`${bracketIfNeeded(source)}{${min},${max}}`, flags);
 
 const namePrefix = ["ms", "mrs", "mr", "dr", "prof"]
   .map((x) => new RegExp(`${x}\\.?`))
@@ -317,8 +319,8 @@ const speaker = [optional(hyphen), personName, /\s?:/, boundry].reduce(
 
 const speakerInEnd = [hyphen, /\s*/, personName, /$/].reduce(concatRegexp);
 
-export const negativeLookBehind = (x: RegExp) =>
-  new RegExp(`(?<!${x.source})`, x.flags);
+export const negativeLookBehind = ({ source, flags }: RegExp) =>
+  new RegExp(`(?<!${source})`, flags);
 
 const splitSentences = split(/(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=[,!.?:])\s/);
 
@@ -344,8 +346,8 @@ export const ngramsOfAtLeastNWords = (n: number) => (s: string) => {
   return ngrams;
 };
 
-export const wholeWord = (r: RegExp) =>
-  new RegExp(`(^|${boundry.source})${r.source}($|${boundry.source})`, r.flags);
+export const wholeWord = ({ source, flags }: RegExp) =>
+  new RegExp(`(^|${boundry.source})${source}($|${boundry.source})`, flags);
 
 const containsPhrase = (str: string) => (re: RegExp) => re.test(str);
 const strToRegexp = (s: string) => new RegExp(s);
