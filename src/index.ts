@@ -175,6 +175,9 @@ const replaceDidgitNames = pipe(
   replace(/\bzero\b/g, "0"),
 );
 
+export const removeDiacritics = (x: string) =>
+  x.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
 export const simplify: (x: string) => string = pipe(
   (x: string) => x.trim(),
   replaceSmartQuotes,
@@ -187,6 +190,7 @@ export const simplify: (x: string) => string = pipe(
   replace(/\s+/g, " "),
   replace(/<\/?i>/g, ""),
   replace(/\bdoctor\b/g, "dr"),
+  removeDiacritics,
   (x: string) => x.trim(),
 );
 

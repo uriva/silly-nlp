@@ -175,7 +175,7 @@ testUnaryFn(
   ],
 ]);
 
-testUnaryFn("simplify", simplify)([["M*A*S*H", "mash"]]);
+testUnaryFn("simplify", simplify)([["M*A*S*H", "mash"], ["Israël", "israel"]]);
 
 testUnaryFn(
   "times",
