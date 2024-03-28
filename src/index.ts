@@ -1,16 +1,17 @@
 import {
+  alljuxt,
+  complement,
   includedIn,
   join,
   letIn,
-  logAround,
   lowercase,
+  map,
   max,
   nonempty,
   pipe,
   range,
   replace,
   reverse,
-  sideLog,
   sort,
   split,
   take,
@@ -364,3 +365,40 @@ export const someKewyordMatches = (keywords: string[]) => (x: string) =>
 
 export const urlsInText = (text: string) =>
   text.match(/https?:\/\/[^\s/$.?#].[^\s]*/g) || [];
+
+type Keywords = { keywords: string[]; antiKeywords?: string[] };
+
+type ValueToKeywords<T extends number | string | symbol> = Record<
+  T,
+  Keywords
+>;
+
+type PredicateAndValue<T> = [(txt: string) => boolean, T];
+
+const keywordMatchers = <T extends number | string | symbol>(
+  valuesAndKeywords: ValueToKeywords<T>,
+) =>
+  (Object.entries(valuesAndKeywords) as [T, Keywords][]).map(
+    (
+      [value, { keywords, antiKeywords }]: [T, Keywords],
+    ): PredicateAndValue<T> => [
+      alljuxt(
+        someKewyordMatches(keywords),
+        complement(someKewyordMatches(antiKeywords ?? [])),
+      ),
+      value,
+    ],
+  );
+
+export const triggerByText = <T extends number | string | symbol>(
+  x: ValueToKeywords<T>,
+) =>
+  pipe(
+    keywordMatchers<T>,
+    (matcher: PredicateAndValue<T>[]): (text: string) => T[] =>
+      // @ts-expect-error pipe typing doesn't handle generics
+      pipe(
+        (text) => matcher.filter(([predicate]) => predicate(text)),
+        map(([, value]) => value),
+      ),
+  )(x);
