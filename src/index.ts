@@ -162,7 +162,7 @@ export const replaceSmartQuotes = pipe(
   replace(/[“”]/g, '"'),
 );
 
-const replaceDidgitNames = pipe(
+const replaceDigitNames = pipe(
   replace(/\bten\b/g, "10"),
   replace(/\bnine\b/g, "9"),
   replace(/\beight\b/g, "8"),
@@ -183,11 +183,10 @@ export const simplify: (x: string) => string = pipe(
   (x: string) => x.trim(),
   replaceSmartQuotes,
   lowercase,
-  replace(/\s/g, " "),
-  replaceDidgitNames,
+  replaceDigitNames,
   replace(/\[.*\]/, ""),
   replace(/[*:'"♪]/g, ""),
-  replace(/[,.?!\n-]/g, " "),
+  replace(/[,.?!\n-+]/g, " "),
   replace(/\s+/g, " "),
   replace(/<\/?i>/g, ""),
   replace(/\bdoctor\b/g, "dr"),

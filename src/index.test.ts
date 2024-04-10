@@ -34,7 +34,10 @@ const testUnaryFn =
 testUnaryFn(
   "someKewyordMatches",
   someKewyordMatches(["בדסמ"]),
-)([["חוזרים ליסודות בהרצאת “מבוא לבדסמ” במענטש, ב-15/01/24", true]]);
+)([
+  ["חוזרים ליסודות בהרצאת “מבוא לבדסמ” במענטש, ב-15/01/24", true],
+  ["בדסמ+", true],
+]);
 
 testFn(
   "prefixesWithSuffix",
