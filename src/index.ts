@@ -315,7 +315,7 @@ const personName = [
 
 const hyphen = /[―-]/;
 
-const boundry = [/[_@.-\s:/בלה[\]?&%$#=*,!()]/, /^/, /$/].reduce(regExpOr); // \b doesn't work for non ascii
+const boundry = [/[_@.-\s:/בלהו[\]?&%$#=*,!()]/, /^/, /$/].reduce(regExpOr); // \b doesn't work for non ascii
 
 const speaker = [optional(hyphen), personName, /\s?:/, boundry].reduce(
   concatRegexp,
