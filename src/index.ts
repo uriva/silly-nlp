@@ -364,7 +364,7 @@ export const someKewyordMatches = (keywords: string[]) => (x: string) =>
 
 export const urlsInText = (
   x: string,
-) => [...getUrls(x.replace(/\b[^\s]+.(jpg|png|jpeg)\b/, ""))];
+) => [...getUrls(x.replace(/\b[^\s]+.(jpg|png|jpeg)\b/g, ""))];
 
 type Keywords = { keywords: string[]; antiKeywords?: string[] };
 

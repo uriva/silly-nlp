@@ -199,7 +199,7 @@ testUnaryFn("urlsInText", urlsInText)([
   מיד אחרי ההרשמה יפתח עבורך דף תשלום
   שם מלא
   טלפון
-  מייל`,
+  מייל another-image.jpg`,
     [],
   ],
   [
