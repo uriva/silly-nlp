@@ -362,7 +362,9 @@ const kwInText = (x: string) =>
 export const someKewyordMatches = (keywords: string[]) => (x: string) =>
   keywords.some(kwInText(x));
 
-export const urlsInText = (x: string) => [...getUrls(x)];
+export const urlsInText = (
+  x: string,
+) => [...getUrls(x.replace(/\b[^\s]+.(jpg|png|jpeg)\b/, ""))];
 
 type Keywords = { keywords: string[]; antiKeywords?: string[] };
 
