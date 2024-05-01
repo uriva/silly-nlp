@@ -18,7 +18,7 @@ import {
   trim,
   trimWhitespace,
 } from "https://deno.land/x/gamla@43.0.0/src/index.ts";
-
+import getUrls from "npm:get-urls";
 import { remove } from "https://deno.land/x/gamla@43.0.0/src/filter.ts";
 import { fuzzySearch as fs } from "npm:levenshtein-search";
 import { englishWords } from "./englishWords.ts";
@@ -362,8 +362,7 @@ const kwInText = (x: string) =>
 export const someKewyordMatches = (keywords: string[]) => (x: string) =>
   keywords.some(kwInText(x));
 
-export const urlsInText = (text: string) =>
-  text.match(/https?:\/\/[^\s/$.?#].[^\s]*/g) || [];
+export const urlsInText = (x: string) => [...getUrls(x)];
 
 type Keywords = { keywords: string[]; antiKeywords?: string[] };
 
