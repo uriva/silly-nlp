@@ -1,5 +1,8 @@
+import phone from "npm:phone";
+
 import {
   alljuxt,
+  coerce,
   complement,
   includedIn,
   join,
@@ -10,6 +13,7 @@ import {
   nonempty,
   pipe,
   range,
+  remove,
   replace,
   reverse,
   sort,
@@ -17,9 +21,8 @@ import {
   take,
   trim,
   trimWhitespace,
-} from "https://deno.land/x/gamla@43.0.0/src/index.ts";
+} from "https://deno.land/x/gamla@82.0.0/src/index.ts";
 import getUrls from "npm:get-urls";
-import { remove } from "https://deno.land/x/gamla@43.0.0/src/filter.ts";
 import { fuzzySearch as fs } from "npm:levenshtein-search";
 import { englishWords } from "./englishWords.ts";
 import { stopWords } from "./stopWords.ts";
@@ -389,7 +392,6 @@ const keywordMatchers = <T extends number | string | symbol>(
       value,
     ],
   );
-
 export const triggerByText = <T extends number | string | symbol>(
   x: ValueToKeywords<T>,
 ) =>
@@ -402,3 +404,19 @@ export const triggerByText = <T extends number | string | symbol>(
         map(([, value]) => value),
       ),
   )(x);
+
+export const telegramHandlesInText = (x: string) =>
+  letIn(
+    regExpOr(
+      /.*\B@((?=\w{5,32}\b)[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*).*/,
+      /t.me\/(\w{4,})/,
+    ).exec(x),
+    (match) => match?.[1] ? [match[1]] : [],
+  );
+
+export const phonesInText = (country: string) => (x: string): string[] =>
+  x.split("\n").map((y) => phone.phone(y, { country })).filter(({ isValid }) =>
+    isValid
+  ).map(({ phoneNumber }) => phoneNumber).map((x) =>
+    coerce(x).replace("+", "")
+  );

@@ -12,6 +12,7 @@ import {
   simplify,
   someKewyordMatches,
   suffixesWithPrefix,
+  telegramHandlesInText,
   urlsInText,
 } from "./index.ts";
 
@@ -232,4 +233,10 @@ testUnaryFn("urlsInText", urlsInText)([
     ["http://shiri-livny.com/adamaretreat", "http://makorehayom.info/48YR0Sw"],
   ],
   ["", []],
+]);
+
+testUnaryFn("telegram handlers", telegramHandlesInText)([
+  ["", []],
+  ["john@gmail.com", []],
+  ["my telegram handle is @jonny", ["jonny"]],
 ]);
