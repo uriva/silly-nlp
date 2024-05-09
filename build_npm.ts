@@ -7,6 +7,7 @@ await emptyDir(outDir);
 await build({
   entryPoints: ["./src/index.ts"],
   outDir,
+  scriptModule: false,
   typeCheck: false,
   shims: { deno: true },
   mappings: {
