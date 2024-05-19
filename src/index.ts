@@ -22,7 +22,7 @@ import {
   trim,
   trimWhitespace,
 } from "https://deno.land/x/gamla@82.0.0/src/index.ts";
-import getUrls from "npm:get-urls";
+import getUrls from "npm:get-urls@12.0.0";
 import { fuzzySearch as fs } from "npm:levenshtein-search";
 import { englishWords } from "./englishWords.ts";
 import { stopWords } from "./stopWords.ts";
