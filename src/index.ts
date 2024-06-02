@@ -365,9 +365,14 @@ const kwInText = (x: string) =>
 export const someKewyordMatches = (keywords: string[]) => (x: string) =>
   keywords.some(kwInText(x));
 
+const removeEmails = replace(
+  /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/g,
+  "",
+);
+
 export const urlsInText = (
   x: string,
-) => [...getUrls(x.replace(/\b[^\s]+.(jpg|png|jpeg)\b/g, ""))];
+) => [...getUrls(removeEmails(x).replace(/\b[^\s]+.(jpg|png|jpeg)\b/g, ""))];
 
 type Keywords = { keywords: string[]; antiKeywords?: string[] };
 

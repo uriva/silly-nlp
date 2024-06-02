@@ -192,6 +192,17 @@ testUnaryFn(
 
 testUnaryFn("urlsInText", urlsInText)([
   [
+    `Micro production
+hahev11@walla.com
+
+
+מקום
+
+ישראל
+תגיות`,
+    [],
+  ],
+  [
     ` 
   מתלבט.ת? בוא.י נדבר
   להרשמה
