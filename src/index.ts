@@ -191,7 +191,7 @@ export const simplify: (x: string) => string = pipe(
   replaceDigitNames,
   replace(/\[.*\]/, ""),
   replace(/[*:'"♪]/g, ""),
-  replace(/[,.?!\n-+]/g, " "),
+  replace(/[,.!?\n\-+]/g, " "),
   replace(/\s+/g, " "),
   replace(/<\/?i>/g, ""),
   replace(/\bdoctor\b/g, "dr"),
