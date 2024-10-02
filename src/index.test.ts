@@ -17,11 +17,13 @@ import {
   suffixesWithPrefix,
   telegramHandlesInText,
   urlsInText,
+  wholeWord,
 } from "./index.ts";
 
 const testFn = <F extends Func>(name: string, f: F) =>
   each(([args, result]: [Parameters<F>, ReturnType<F>]) =>
-    Deno.test(name, () => assertEquals(f(...args), result))
+    Deno.test(`${name}: ${JSON.stringify(args).substring(0, 10)}`, () =>
+      assertEquals(f(...args), result))
   );
 
 const testUnaryFn =
@@ -36,6 +38,11 @@ testUnaryFn(
   ["חוזרים ליסודות בהרצאת “מבוא לבדסמ” במענטש, ב-15/01/24", true],
   ["בדסמ+", true],
   ["בדסמ🔥", true],
+]);
+
+testUnaryFn("wholeword", (x) => (wholeWord(/נתי/)).test(x))([
+  ["הבנתי", false],
+  ["ונתי", true],
 ]);
 
 testFn(

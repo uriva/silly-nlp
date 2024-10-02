@@ -1,5 +1,8 @@
 import phone from "npm:phone";
 
+import getUrls from "npm:get-urls@12.0.0";
+import { fuzzySearch as fs } from "npm:levenshtein-search";
+import { sideLog } from "https://deno.land/x/gamla@91.0.0/src/debug.ts";
 import {
   alljuxt,
   coerce,
@@ -22,8 +25,6 @@ import {
   trim,
   trimWhitespace,
 } from "https://deno.land/x/gamla@91.0.0/src/index.ts";
-import getUrls from "npm:get-urls@12.0.0";
-import { fuzzySearch as fs } from "npm:levenshtein-search";
 import { englishWords } from "./englishWords.ts";
 import { stopWords } from "./stopWords.ts";
 export type FuzzyMatch = { start: number; end: number };
@@ -323,18 +324,30 @@ const hyphen = /[―-]/;
 const allEmojis =
   /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/;
 
-const boundry = [/[_@.-\s:/בלהו[\]?&%$#=*,!()]/, /^/, /$/, allEmojis].reduce(
-  regExpOr,
-); // \b doesn't work for non ascii
+export const negativeLookBehind = ({ source, flags }: RegExp) =>
+  new RegExp(`(?<!${source})`, flags);
+
+const hebrewPrepositionalLetters = "הולב".split("").map((prefix) =>
+  [
+    negativeLookBehind(/[א-תa-zA-Z]/),
+    stringToRegexp(prefix),
+  ].reduce(concatRegexp)
+).reduce(regExpOr);
+
+// \b doesn't work for non ascii
+const boundry = [
+  /[_@.-\s:/[\]?&%$#=*,!()]/,
+  /^/,
+  /$/,
+  hebrewPrepositionalLetters,
+  allEmojis,
+].reduce(regExpOr);
 
 const speaker = [optional(hyphen), personName, /\s?:/, boundry].reduce(
   concatRegexp,
 );
 
 const speakerInEnd = [hyphen, /\s*/, personName, /$/].reduce(concatRegexp);
-
-export const negativeLookBehind = ({ source, flags }: RegExp) =>
-  new RegExp(`(?<!${source})`, flags);
 
 const splitSentences = split(/(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=[,!.?:])\s/);
 
