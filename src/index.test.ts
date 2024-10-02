@@ -1,3 +1,6 @@
+import { assertEquals } from "https://deno.land/std@0.192.0/testing/asserts.ts";
+import { each } from "https://deno.land/x/gamla@91.0.0/src/index.ts";
+import type { Func } from "https://deno.land/x/gamla@91.0.0/src/typing.ts";
 import {
   approximateSemanticEquality,
   capitalizedPrefix,
@@ -16,17 +19,10 @@ import {
   urlsInText,
 } from "./index.ts";
 
-import { assertEquals } from "https://deno.land/std@0.192.0/testing/asserts.ts";
-
-// deno-lint-ignore no-explicit-any
-type Func = (...args: any[]) => any;
-
-const testFn =
-  <F extends Func>(name: string, f: F) =>
-  (cases: [Parameters<F>, ReturnType<F>][]) =>
-    cases.forEach(([args, result]) =>
-      Deno.test(name, () => assertEquals(f(...args), result))
-    );
+const testFn = <F extends Func>(name: string, f: F) =>
+  each(([args, result]: [Parameters<F>, ReturnType<F>]) =>
+    Deno.test(name, () => assertEquals(f(...args), result))
+  );
 
 const testUnaryFn =
   <F extends Func>(name: string, f: F) =>

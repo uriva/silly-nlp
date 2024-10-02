@@ -21,7 +21,7 @@ import {
   take,
   trim,
   trimWhitespace,
-} from "https://deno.land/x/gamla@82.0.0/src/index.ts";
+} from "https://deno.land/x/gamla@91.0.0/src/index.ts";
 import getUrls from "npm:get-urls@12.0.0";
 import { fuzzySearch as fs } from "npm:levenshtein-search";
 import { englishWords } from "./englishWords.ts";
@@ -39,6 +39,7 @@ type RegExpMatch = { start: number; end: number };
 const regExpLocations = (pattern: RegExp, input: string): RegExpMatch[] => {
   const locations: RegExpMatch[] = [];
   let match: RegExpExecArray | null;
+  // biome-ignore lint/suspicious/noAssignInExpressions: copied from chatgpt
   while ((match = pattern.exec(input)) !== null) {
     locations.push({
       start: match.index,
@@ -180,6 +181,7 @@ const replaceDigitNames = pipe(
 );
 
 export const removeDiacritics = (x: string) =>
+  // biome-ignore lint/suspicious/noMisleadingCharacterClass: seems to work i'm not sure
   x.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
 export const simplify: (x: string) => string = pipe(
