@@ -1,8 +1,5 @@
 import phone from "npm:phone";
 
-import getUrls from "npm:get-urls@12.0.0";
-import { fuzzySearch as fs } from "npm:levenshtein-search";
-import { sideLog } from "https://deno.land/x/gamla@91.0.0/src/debug.ts";
 import {
   alljuxt,
   coerce,
@@ -25,6 +22,8 @@ import {
   trim,
   trimWhitespace,
 } from "https://deno.land/x/gamla@91.0.0/src/index.ts";
+import getUrls from "npm:get-urls@12.0.0";
+import { fuzzySearch as fs } from "npm:levenshtein-search";
 import { englishWords } from "./englishWords.ts";
 import { stopWords } from "./stopWords.ts";
 export type FuzzyMatch = { start: number; end: number };
