@@ -31,14 +31,16 @@ const testUnaryFn =
   (cases: [Parameters<F>[0], ReturnType<F>][]) =>
     testFn(name, f)(cases.map(([x, y]) => [[x] as Parameters<F>, y]));
 
-testUnaryFn(
-  "someKewyordMatches",
-  someKewyordMatches(["בדסמ"]),
-)([
+testUnaryFn("hebrew kw matching", someKewyordMatches(["בדסמ"]))([
   ["חוזרים ליסודות בהרצאת “מבוא לבדסמ” במענטש, ב-15/01/24", true],
   ["בדסמ+", true],
   ["בדסמ🔥", true],
 ]);
+
+testUnaryFn("plurality", someKewyordMatches(["talk"]))([["talks", true], [
+  "talk",
+  true,
+]]);
 
 testUnaryFn("wholeword", (x) => (wholeWord(/נתי/)).test(x))([
   ["הבנתי", false],
