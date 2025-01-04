@@ -186,7 +186,11 @@ testUnaryFn(
   ],
 ]);
 
-testUnaryFn("simplify", simplify)([["M*A*S*H", "mash"], ["Israël", "israel"]]);
+testUnaryFn("simplify", simplify)([
+  ["M*A*S*H", "mash"],
+  ["Israël", "israel"],
+  ["MASSIMO 🇫🇷", "massimo"],
+]);
 
 testUnaryFn(
   "times",

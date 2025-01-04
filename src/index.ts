@@ -184,6 +184,17 @@ export const removeDiacritics = (x: string) =>
   // biome-ignore lint/suspicious/noMisleadingCharacterClass: seems to work i'm not sure
   x.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
+const allEmojis =
+  /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/;
+
+const addFlag = (flag: string) => ({ source, flags }: RegExp) =>
+  new RegExp(
+    source,
+    flags.includes(flag) ? flags : (flags + flag).split("").sort().join(""),
+  );
+
+export const globalize = addFlag("g");
+
 export const simplify: (x: string) => string = pipe(
   (x: string) => x.trim(),
   replaceSmartQuotes,
@@ -192,10 +203,11 @@ export const simplify: (x: string) => string = pipe(
   replace(/\[.*\]/, ""),
   replace(/[*:'"♪]/g, ""),
   replace(/[,.!?\n\-+]/g, " "),
-  replace(/\s+/g, " "),
   replace(/<\/?i>/g, ""),
   replace(/\bdoctor\b/g, "dr"),
   removeDiacritics,
+  replace(globalize(allEmojis), " "),
+  replace(/\s+/g, " "),
   (x: string) => x.trim(),
 );
 
@@ -259,12 +271,6 @@ const combineFlags = (x: RegExp, y: RegExp) =>
     .join("")
     .replace(/(.)(?=.*\1)/g, "");
 
-const addFlag = (flag: string) => ({ source, flags }: RegExp) =>
-  new RegExp(
-    source,
-    flags.includes(flag) ? flags : (flags + flag).split("").sort().join(""),
-  );
-
 export const stringToRegexp = (x: string) =>
   new RegExp(x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
 
@@ -294,8 +300,6 @@ export const zeroOrMore = ({ source, flags }: RegExp) =>
 export const oneOrMore = ({ source, flags }: RegExp) =>
   new RegExp(`${bracketIfNeeded(source)}+`, flags);
 
-export const globalize = addFlag("g");
-
 export const regexpTimes = (
   min: number,
   max: number,
@@ -321,9 +325,6 @@ const personName = [
 const hyphen = /[―-]/;
 
 const plurality = /s|ים|ות/i;
-
-const allEmojis =
-  /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/;
 
 export const negativeLookBehind = ({ source, flags }: RegExp) =>
   new RegExp(`(?<!${source})`, flags);
