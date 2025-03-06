@@ -251,9 +251,13 @@ hahev11@walla.com
 
 רוצה לדעת לפני כולם מה קורה?
 להצטרפות לקבוצות של מה קורה היום? >> makorehayom.info/48YR0Sw`,
-    ["http://shiri-livny.com/adamaretreat", "http://makorehayom.info/48YR0Sw"],
+    ["Shiri-livny.com/adamaretreat", "makorehayom.info/48YR0Sw"],
   ],
   ["", []],
+  [
+    "https://gigtickets.co.il/il//eid/101",
+    ["https://gigtickets.co.il/il//eid/101"],
+  ],
 ]);
 
 testUnaryFn("telegram handlers", telegramHandlesInText)([
