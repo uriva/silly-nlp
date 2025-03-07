@@ -395,17 +395,8 @@ const removeEmails = replace(
 
 const extractUrls = (text: string) => {
   const urlRegex =
-    /(?:(?:https?|ftp):\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]*/g;
-  const urls = text.match(urlRegex) || [];
-  // Filter out things that look like version numbers or other unwanted patterns
-  const filteredUrls = urls.filter((url) => {
-    // Basic filter to exclude things that look like version numbers or paths beginning with numbers.
-    if (/^\d+\.\d+/.test(url) || /^\d+\/\//.test(url)) {
-      return false;
-    }
-    return true;
-  });
-  return filteredUrls;
+    /\b(?:https?:\/\/|ftp:\/\/|www\.)?[\w.-]+\.[a-z]{2,}(?:\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?\b/gi;
+  return text.match(urlRegex) || [];
 };
 
 export const urlsInText = (

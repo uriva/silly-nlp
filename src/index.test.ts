@@ -253,6 +253,7 @@ hahev11@walla.com
 להצטרפות לקבוצות של מה קורה היום? >> makorehayom.info/48YR0Sw`,
     ["Shiri-livny.com/adamaretreat", "makorehayom.info/48YR0Sw"],
   ],
+  ["מחר ה-3.7 ב-21:00 בתל אביב", []],
   ["", []],
   [
     "https://gigtickets.co.il/il//eid/101",
