@@ -395,7 +395,7 @@ const removeEmails = replace(
 
 const extractUrls = (text: string) => {
   const urlRegex =
-    /\b(?:https?:\/\/|ftp:\/\/|www\.)?[\w.-]+\.[a-z]{2,}(?:\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?\b/gi;
+    /\b(?:https?:\/\/|ftp:\/\/)?[\w.-]+\.[a-z]{2,}(?:\/[\w\-._~:/?#[\]@!$&'()*+,;=%]*)?\b/gi;
   return text.match(urlRegex) || [];
 };
 
