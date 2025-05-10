@@ -1,5 +1,4 @@
 import phone from "npm:phone";
-
 import {
   alljuxt,
   coerce,
@@ -21,8 +20,7 @@ import {
   take,
   trim,
   trimWhitespace,
-} from "https://deno.land/x/gamla@91.0.0/src/index.ts";
-import getUrls from "npm:get-urls@12.0.0";
+} from "gamla";
 import { fuzzySearch as fs } from "npm:levenshtein-search";
 import { englishWords } from "./englishWords.ts";
 import { stopWords } from "./stopWords.ts";
@@ -146,7 +144,9 @@ export const topByCount =
       original[key] = element;
       counts[key] = (counts[key] || 0) + 1;
     }
-    const values = pipe(Object.values, sort, take(n))(counts);
+    const values = pipe(Object.values<number>, sort<number>, take<number>(n))(
+      counts,
+    );
     return sort(
       Object.entries(counts)
         .filter(([, count]) => values.includes(count))

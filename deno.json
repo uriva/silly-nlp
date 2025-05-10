@@ -1,5 +1,8 @@
 {
   "tasks": {
     "build": "deno run -A build_npm.ts"
+  },
+  "imports": {
+    "gamla": "npm:gamla@124.0.0"
   }
 }
