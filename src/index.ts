@@ -20,8 +20,8 @@ import {
   trim,
   trimWhitespace,
 } from "gamla";
-import { fuzzySearch as fs } from "npm:levenshtein-search";
-import phone from "npm:phone";
+import { fuzzySearch as fs } from "npm:levenshtein-search@0.1.2";
+import phone from "npm:phone@3.1.59";
 import { englishWords } from "./englishWords.ts";
 import { stopWords } from "./stopWords.ts";
 
@@ -51,7 +51,7 @@ const regExpLocations = (pattern: RegExp, input: string): RegExpMatch[] => {
 const sentenceToWords = split(/\s+/);
 const wordsToSentence = join(" ");
 
-export const paragraphToSentences = split(/\.\s/);
+export const paragraphToSentences: (s: string) => string[] = split(/\.\s/);
 
 const preStopWords = ["the", "with", "of", "and", "in"];
 
@@ -84,13 +84,13 @@ const capitalizedSequence =
     return sequence.slice(start, end);
   };
 
-export const capitalizedPrefix = pipe(
+export const capitalizedPrefix: (s: string) => string = pipe(
   sentenceToWords,
   capitalizedSequence(preStopWords, []),
   wordsToSentence,
 );
 
-export const capitalizedSuffix = pipe(
+export const capitalizedSuffix: (s: string) => string = pipe(
   sentenceToWords,
   reverse<string>,
   capitalizedSequence([], preStopWords),
@@ -98,10 +98,10 @@ export const capitalizedSuffix = pipe(
   wordsToSentence,
 );
 
-export const prefixesWithSuffix = (pattern: RegExp, input: string) =>
+export const prefixesWithSuffix = (pattern: RegExp, input: string): string[] =>
   regExpLocations(pattern, input).map(({ start }) => input.slice(0, start));
 
-export const suffixesWithPrefix = (regex: RegExp, input: string) =>
+export const suffixesWithPrefix = (regex: RegExp, input: string): string[] =>
   regExpLocations(regex, input).map(({ end }) => input.slice(end));
 
 export const majority =
@@ -155,19 +155,19 @@ export const topByCount =
     );
   };
 
-export const equivalence = pipe(
+export const equivalence: (s: string) => string = pipe(
   lowercase,
   replace(/\bthe\b/i, ""),
   trim([" ", ".", ",", "-"]),
 );
 
-export const replaceSmartQuotes = pipe(
+export const replaceSmartQuotes: (s: string) => string = pipe(
   replace(/…/g, "..."),
   replace(/[‘’]/g, "'"),
   replace(/[“”]/g, '"'),
 );
 
-const replaceDigitNames = pipe(
+const replaceDigitNames: (s: string) => string = pipe(
   replace(/\bten\b/g, "10"),
   replace(/\bnine\b/g, "9"),
   replace(/\beight\b/g, "8"),
@@ -181,7 +181,7 @@ const replaceDigitNames = pipe(
   replace(/\bzero\b/g, "0"),
 );
 
-export const removeDiacritics = (x: string) =>
+export const removeDiacritics = (x: string): string =>
   // biome-ignore lint/suspicious/noMisleadingCharacterClass: seems to work i'm not sure
   x.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
@@ -194,7 +194,7 @@ const addFlag = (flag: string) => ({ source, flags }: RegExp) =>
     flags.includes(flag) ? flags : (flags + flag).split("").sort().join(""),
   );
 
-export const globalize = addFlag("g");
+export const globalize: (re: RegExp) => RegExp = addFlag("g");
 
 export const simplify: (x: string) => string = pipe(
   (x: string) => x.trim(),
@@ -228,14 +228,14 @@ const fixMissingSpaceInOneWord = (x: string) =>
 const missingSpace = (x: string) =>
   x.split(/\s/).map(fixMissingSpaceInOneWord).join(" ");
 
-const removeNonSemanticDifferences = pipe(
+const removeNonSemanticDifferences: (s: string) => string = pipe(
   lowercase,
   missingSpace,
   simplify,
   replace(/\bthe\b\s*/g, ""),
 );
 
-export const approximateSemanticEquality = (x: string, y: string) =>
+export const approximateSemanticEquality = (x: string, y: string): boolean =>
   letIn(
     {
       xSimple: removeNonSemanticDifferences(x),
@@ -251,7 +251,10 @@ export const approximateSemanticEquality = (x: string, y: string) =>
       ),
   );
 
-export const isStopWord = pipe(simplify, includedIn(stopWords));
+export const isStopWord: (word: string) => boolean = pipe(
+  simplify,
+  includedIn(stopWords),
+);
 
 export const quotedTexts = (input: string): string[] => {
   const regex = /"([^"]*)"/g;
@@ -259,10 +262,10 @@ export const quotedTexts = (input: string): string[] => {
   return matches ? matches.map((match) => match.slice(1, -1)) : [];
 };
 
-export const concatRegexp = (x: RegExp, y: RegExp) =>
+export const concatRegexp = (x: RegExp, y: RegExp): RegExp =>
   new RegExp(x.source + y.source, combineFlags(x, y));
 
-export const regexpEntireString = ({ source, flags }: RegExp) =>
+export const regexpEntireString = ({ source, flags }: RegExp): RegExp =>
   new RegExp(`^${source}$`, flags);
 
 const combineFlags = (x: RegExp, y: RegExp) =>
@@ -272,40 +275,40 @@ const combineFlags = (x: RegExp, y: RegExp) =>
     .join("")
     .replace(/(.)(?=.*\1)/g, "");
 
-export const stringToRegexp = (x: string) =>
+export const stringToRegexp = (x: string): RegExp =>
   new RegExp(x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
 
-export const caseInsensitive = addFlag("i");
+export const caseInsensitive: (re: RegExp) => RegExp = addFlag("i");
 
-export const regExpOr = (x: RegExp, y: RegExp) =>
+export const regExpOr = (x: RegExp, y: RegExp): RegExp =>
   new RegExp(
     `(?:${bracketIfNeeded(x.source)}|${bracketIfNeeded(y.source)})`,
     combineFlags(x, y),
   );
 
-export const selectionGroup = ({ source, flags }: RegExp) =>
+export const selectionGroup = ({ source, flags }: RegExp): RegExp =>
   new RegExp(`(${source})`, flags);
 
-const bracketIfNeeded = (s: string) =>
+const bracketIfNeeded = (s: string): string =>
   (s.startsWith("(") && s.endsWith(")")) ||
     (s.startsWith("[") && s.endsWith("]"))
     ? s
     : `(?:${s})`;
 
-export const optional = ({ source, flags }: RegExp) =>
+export const optional = ({ source, flags }: RegExp): RegExp =>
   new RegExp(`${bracketIfNeeded(source)}?`, flags);
 
-export const zeroOrMore = ({ source, flags }: RegExp) =>
+export const zeroOrMore = ({ source, flags }: RegExp): RegExp =>
   new RegExp(`${bracketIfNeeded(source)}*`, flags);
 
-export const oneOrMore = ({ source, flags }: RegExp) =>
+export const oneOrMore = ({ source, flags }: RegExp): RegExp =>
   new RegExp(`${bracketIfNeeded(source)}+`, flags);
 
 export const regexpTimes = (
   min: number,
   max: number,
   { source, flags }: RegExp,
-) => new RegExp(`${bracketIfNeeded(source)}{${min},${max}}`, flags);
+): RegExp => new RegExp(`${bracketIfNeeded(source)}{${min},${max}}`, flags);
 
 const namePrefix = ["ms", "mrs", "mr", "dr", "prof"]
   .map((x) => new RegExp(`${x}\\.?`))
@@ -327,7 +330,7 @@ const hyphen = /[―-]/;
 
 const plurality = /s|ים|ות/i;
 
-export const negativeLookBehind = ({ source, flags }: RegExp) =>
+export const negativeLookBehind = ({ source, flags }: RegExp): RegExp =>
   new RegExp(`(?<!${source})`, flags);
 
 const hebrewPrepositionalLetters = "הולב".split("").map((prefix) =>
@@ -338,7 +341,7 @@ const hebrewPrepositionalLetters = "הולב".split("").map((prefix) =>
 ).reduce(regExpOr);
 
 // \b doesn't work for non ascii
-const boundry = [
+const boundry: RegExp = [
   /[_@.-\s:/[\]?&%$#=*,!()]/,
   /^/,
   /$/,
@@ -355,9 +358,10 @@ const speakerInEnd = [hyphen, /\s*/, personName, /$/].reduce(concatRegexp);
 
 const splitSentences = split(/(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=[,!.?:])\s/);
 
-export const matchesRegexp = (r: RegExp) => (txt: string) => r.test(txt);
+export const matchesRegexp = (r: RegExp) => (txt: string): boolean =>
+  r.test(txt);
 
-export const cleanSpeakers = pipe(
+export const cleanSpeakers: (s: string) => string = pipe(
   splitSentences,
   remove(pipe(trimWhitespace, matchesRegexp(regexpEntireString(speaker)))),
   join(" "),
@@ -366,7 +370,7 @@ export const cleanSpeakers = pipe(
   trimWhitespace,
 );
 
-export const ngramsOfAtLeastNWords = (n: number) => (s: string) => {
+export const ngramsOfAtLeastNWords = (n: number) => (s: string): string[] => {
   const words = s.split(" ");
   const ngrams: string[] = [];
   for (let i = 0; i <= words.length - n; i++) {
@@ -377,7 +381,7 @@ export const ngramsOfAtLeastNWords = (n: number) => (s: string) => {
   return ngrams;
 };
 
-export const wholeWord = ({ source, flags }: RegExp) =>
+export const wholeWord = ({ source, flags }: RegExp): RegExp =>
   new RegExp(`(^|${boundry.source})${source}($|${boundry.source})`, flags);
 
 const containsPhrase = (str: string) => (re: RegExp) => re.test(str);
@@ -386,10 +390,10 @@ const strToRegexp = (s: string) => new RegExp(s);
 const kwInText = (x: string) =>
   pipe(simplify, strToRegexp, wholeWord, containsPhrase(simplify(x)));
 
-export const someKewyordMatches = (keywords: string[]) => (x: string) =>
-  keywords.some(kwInText(x));
+export const someKewyordMatches =
+  (keywords: string[]) => (x: string): boolean => keywords.some(kwInText(x));
 
-const removeEmails = replace(
+const removeEmails: (x: string) => string = replace(
   /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/g,
   "",
 );
@@ -400,7 +404,7 @@ const extractUrls = (text: string) => {
   return text.match(urlRegex) || [];
 };
 
-export const urlsInText = (
+export const urlsInText: (text: string) => [] | RegExpMatchArray = (
   x: string,
 ) => extractUrls(removeEmails(x).replace(/\b[^\s]+.(jpg|png|jpeg)\b/g, ""));
 
@@ -427,7 +431,9 @@ const keywordMatchers = <T extends number | string | symbol>(
       value,
     ],
   );
-export const triggerByText = <T extends number | string | symbol>(
+export const triggerByText: <T extends number | string | symbol>(
+  x: ValueToKeywords<T>,
+) => (text: string) => T[] = <T extends number | string | symbol>(
   x: ValueToKeywords<T>,
 ) =>
   pipe(
@@ -440,7 +446,7 @@ export const triggerByText = <T extends number | string | symbol>(
       ),
   )(x);
 
-export const telegramHandlesInText = (x: string) =>
+export const telegramHandlesInText = (x: string): string[] =>
   letIn(
     regExpOr(
       /.*\B@((?=\w{5,32}\b)[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*).*/,
