@@ -1,6 +1,5 @@
-import { assertEquals } from "https://deno.land/std@0.192.0/testing/asserts.ts";
-import { each } from "https://deno.land/x/gamla@91.0.0/src/index.ts";
-import type { Func } from "https://deno.land/x/gamla@91.0.0/src/typing.ts";
+import { each, type Func } from "gamla";
+import { assertEquals } from "jsr:@std/assert";
 import {
   approximateSemanticEquality,
   capitalizedPrefix,
