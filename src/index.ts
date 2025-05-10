@@ -1,4 +1,3 @@
-import phone from "npm:phone";
 import {
   alljuxt,
   coerce,
@@ -22,8 +21,10 @@ import {
   trimWhitespace,
 } from "gamla";
 import { fuzzySearch as fs } from "npm:levenshtein-search";
+import phone from "npm:phone";
 import { englishWords } from "./englishWords.ts";
 import { stopWords } from "./stopWords.ts";
+
 export type FuzzyMatch = { start: number; end: number };
 
 export const fuzzySearch = (
