@@ -1,7 +1,8 @@
 {
-  "tasks": {
-    "build": "deno run -A build_npm.ts"
-  },
+  "name": "@uri/silly-nlp",
+  "version": "0.0.1",
+  "license": "MIT",
+  "exports": "./src/index.ts",
   "imports": {
     "gamla": "npm:gamla@124.0.0"
   }
