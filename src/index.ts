@@ -465,7 +465,9 @@ export const phonesInText = (country: string) => (x: string): string[] =>
 
 const minSecretLength = 20;
 
-const secretChars = /^[A-Za-z0-9_\-+/=.~]+$/;
+// `=` only appears as base64 padding at the end, never interior/leading, so an
+// assignment like `token=<uuid>` splits rather than being swallowed whole.
+const secretChars = /^[A-Za-z0-9_\-+/.~]+={0,2}$/;
 
 const characterClasses = (token: string) =>
   [/[a-z]/, /[A-Z]/, /[0-9]/].filter((re) => re.test(token)).length;
@@ -488,7 +490,7 @@ export const looksLikeSecret = (token: string): boolean =>
   (characterClasses(token) >= 2 || /^[0-9a-f]{32,}$/i.test(token)) &&
   shannonEntropy(token) >= 3;
 
-const tokenPattern = /[A-Za-z0-9_\-+/=.~]{20,}/g;
+const tokenPattern = /[A-Za-z0-9_\-+/.~]{20,}={0,2}/g;
 
 export const secretsInText = (text: string): FuzzyMatch[] =>
   regExpLocations(tokenPattern, text).filter(({ start, end }) =>
