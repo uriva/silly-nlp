@@ -462,3 +462,46 @@ export const phonesInText = (country: string) => (x: string): string[] =>
   ).map(({ phoneNumber }) => phoneNumber).map((x) =>
     coerce(x).replace("+", "")
   );
+
+const minSecretLength = 20;
+
+const secretChars = /^[A-Za-z0-9_\-+/=.~]+$/;
+
+const characterClasses = (token: string) =>
+  [/[a-z]/, /[A-Z]/, /[0-9]/].filter((re) => re.test(token)).length;
+
+const shannonEntropy = (token: string): number => {
+  const counts: Record<string, number> = {};
+  for (const c of token) counts[c] = (counts[c] || 0) + 1;
+  return Object.values(counts).reduce((sum, count) => {
+    const p = count / token.length;
+    return sum - p * Math.log2(p);
+  }, 0);
+};
+
+// A provider-agnostic guess of whether a bare token is a credential/secret:
+// a long, whitespace-free run of token characters that carries enough entropy
+// and character-class variety to be machine-generated rather than prose.
+export const looksLikeSecret = (token: string): boolean =>
+  token.length >= minSecretLength &&
+  secretChars.test(token) &&
+  (characterClasses(token) >= 2 || /^[0-9a-f]{32,}$/i.test(token)) &&
+  shannonEntropy(token) >= 3;
+
+const tokenPattern = /[A-Za-z0-9_\-+/=.~]{20,}/g;
+
+export const secretsInText = (text: string): FuzzyMatch[] =>
+  regExpLocations(tokenPattern, text).filter(({ start, end }) =>
+    looksLikeSecret(text.slice(start, end))
+  );
+
+export const redactSecrets =
+  (replacer: (secret: string) => string) => (text: string): string =>
+    secretsInText(text)
+      .reverse()
+      .reduce(
+        (result, { start, end }) =>
+          result.slice(0, start) + replacer(result.slice(start, end)) +
+          result.slice(end),
+        text,
+      );

@@ -5,12 +5,15 @@ import {
   capitalizedPrefix,
   capitalizedSuffix,
   cleanSpeakers,
+  looksLikeSecret,
   matchesRegexp,
   ngramsOfAtLeastNWords,
   prefixesWithSuffix,
   quotedTexts,
+  redactSecrets,
   regexpEntireString,
   regexpTimes,
+  secretsInText,
   simplify,
   someKewyordMatches,
   suffixesWithPrefix,
@@ -268,4 +271,41 @@ testUnaryFn("telegram handlers", telegramHandlesInText)([
   ["", []],
   ["john@gmail.com", []],
   ["my telegram handle is @jonny", ["jonny"]],
+]);
+
+// Assembled at runtime so real secret scanners don't flag these fixtures.
+const fakeToken = ["Z9x", "Q12pLm3n", "OpQrStUv", "WxYz0123", "456789Ab"].join(
+  "",
+);
+const fakeHex = ["9bdef048", "4aa04b49", "8855a54c", "2d4ec039", "abcd1234"]
+  .join("");
+
+testUnaryFn("looksLikeSecret", looksLikeSecret)([
+  // machine-generated tokens
+  [fakeToken, true],
+  [fakeHex, true],
+  ["Ab3-" + fakeToken + "-9Zx", true],
+  // natural language / short / low entropy — not secrets
+  ["hello", false],
+  ["supercalifragilisticexpialidocious", false],
+  ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", false],
+  ["1234567890123456789012345", false],
+  ["this_is_a_normal_variable_name", false],
+]);
+
+testUnaryFn(
+  "secretsInText finds a token anywhere",
+  (x: string) => secretsInText(x).length,
+)([
+  [`here is my key ${fakeToken} ok`, 1],
+  ["no secrets here just words and words", 0],
+  [`two ${fakeToken} and ${fakeHex}`, 2],
+]);
+
+testUnaryFn(
+  "redactSecrets replaces detected tokens",
+  redactSecrets(() => "[redacted]"),
+)([
+  [`key ${fakeToken} done`, "key [redacted] done"],
+  ["nothing to hide here", "nothing to hide here"],
 ]);
