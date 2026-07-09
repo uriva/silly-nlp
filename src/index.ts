@@ -492,9 +492,20 @@ export const looksLikeSecret = (token: string): boolean =>
 
 const tokenPattern = /[A-Za-z0-9_\-+/.~]{20,}={0,2}/g;
 
+const urlSpanPattern =
+  /\b(?:https?:\/\/|ftp:\/\/)[\w.-]+\.[a-z]{2,}(?:\/[\w\-._~:/?#[\]@!$&'()*+,;=%]*)?/gi;
+
+const overlaps = (a: FuzzyMatch) => (b: FuzzyMatch) =>
+  a.start < b.end && b.start < a.end;
+
 export const secretsInText = (text: string): FuzzyMatch[] =>
-  regExpLocations(tokenPattern, text).filter(({ start, end }) =>
-    looksLikeSecret(text.slice(start, end))
+  letIn(
+    regExpLocations(urlSpanPattern, text),
+    (urls) =>
+      regExpLocations(tokenPattern, text).filter((match) =>
+        !urls.some(overlaps(match)) &&
+        looksLikeSecret(text.slice(match.start, match.end))
+      ),
   );
 
 export const redactSecrets =

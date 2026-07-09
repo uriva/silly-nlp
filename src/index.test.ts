@@ -300,6 +300,9 @@ testUnaryFn(
   [`here is my key ${fakeToken} ok`, 1],
   ["no secrets here just words and words", 0],
   [`two ${fakeToken} and ${fakeHex}`, 2],
+  [`https://example.com/very/long/path/to/resource/${fakeToken}`, 0],
+  [`check https://api.github.com/repos/uriva/silly-nlp/${fakeHex} out`, 0],
+  [`token in url https://x.io/${fakeToken} but ${fakeHex} is bare`, 1],
 ]);
 
 testUnaryFn(
