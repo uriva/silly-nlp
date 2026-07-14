@@ -472,6 +472,20 @@ const secretChars = /^[A-Za-z0-9_\-+/.~]+={0,2}$/;
 const characterClasses = (token: string) =>
   [/[a-z]/, /[A-Z]/, /[0-9]/].filter((re) => re.test(token)).length;
 
+// A human-readable slug (e.g. `p2b-social-media-scraper`) is a run of
+// dictionary words joined by separators. Real secrets are random, so their
+// separated parts are (almost) never dictionary words. Allowing one non-word
+// segment tolerates prefixes/ids like the `p2b` in `p2b-social-media-scraper`.
+const dictionarySlug = (token: string): boolean =>
+  letIn(
+    token.split(/[-_./]+/).filter((s) => s.length > 0),
+    (segments) =>
+      segments.length >= 2 &&
+      segments.filter((s) => allEnglishWordsAsSet.has(s.toLowerCase()))
+          .length >=
+        segments.length - 1,
+  );
+
 const shannonEntropy = (token: string): number => {
   const counts: Record<string, number> = {};
   for (const c of token) counts[c] = (counts[c] || 0) + 1;
@@ -487,6 +501,7 @@ const shannonEntropy = (token: string): number => {
 export const looksLikeSecret = (token: string): boolean =>
   token.length >= minSecretLength &&
   secretChars.test(token) &&
+  !dictionarySlug(token) &&
   (characterClasses(token) >= 2 || /^[0-9a-f]{32,}$/i.test(token)) &&
   shannonEntropy(token) >= 3;
 

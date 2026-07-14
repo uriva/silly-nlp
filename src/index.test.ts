@@ -291,6 +291,10 @@ testUnaryFn("looksLikeSecret", looksLikeSecret)([
   ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", false],
   ["1234567890123456789012345", false],
   ["this_is_a_normal_variable_name", false],
+  // dashed dictionary-word slugs (e.g. package/repo names) are not secrets,
+  // even when a numeric prefix adds a second character class
+  ["p2b-social-media-scraper", false],
+  ["some-long-dashed-package-name", false],
 ]);
 
 testUnaryFn(
