@@ -295,6 +295,7 @@ testUnaryFn("looksLikeSecret", looksLikeSecret)([
   // even when a numeric prefix adds a second character class
   ["p2b-social-media-scraper", false],
   ["some-long-dashed-package-name", false],
+  ["site:https://google.com", false],
 ]);
 
 testUnaryFn(
@@ -306,6 +307,7 @@ testUnaryFn(
   [`two ${fakeToken} and ${fakeHex}`, 2],
   [`https://example.com/very/long/path/to/resource/${fakeToken}`, 0],
   [`check https://api.github.com/repos/uriva/silly-nlp/${fakeHex} out`, 0],
+  [`site:https://google.com`, 0],
   [`token in url https://x.io/${fakeToken} but ${fakeHex} is bare`, 1],
 ]);
 
