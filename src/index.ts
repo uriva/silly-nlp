@@ -334,11 +334,12 @@ const plurality = /s|ים|ות/i;
 export const negativeLookBehind = ({ source, flags }: RegExp): RegExp =>
   new RegExp(`(?<!${source})`, flags);
 
+// Safari < 16.4 throws on lookbehind, crashing the whole bundle at import time,
+// so a prefix not preceded by a letter is written as `(?:^|[^…])` rather than
+// with lookbehind. All usages of `boundry` are boolean (full match or `.test`),
+// so consuming the preceding character is unobservable.
 const hebrewPrepositionalLetters = "הולב".split("").map((prefix) =>
-  [
-    negativeLookBehind(/[א-תa-zA-Z]/),
-    stringToRegexp(prefix),
-  ].reduce(concatRegexp)
+  new RegExp(`(?:^|[^א-תa-zA-Z])${prefix}`)
 ).reduce(regExpOr);
 
 // \b doesn't work for non ascii
@@ -357,7 +358,33 @@ const speaker = [optional(hyphen), personName, /\s?:/, boundry].reduce(
 
 const speakerInEnd = [hyphen, /\s*/, personName, /$/].reduce(concatRegexp);
 
-const splitSentences = split(/(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=[,!.?:])\s/);
+const isSentenceBreak = (text: string, whitespaceIndex: number): boolean =>
+  /[,!.?:]/.test(text[whitespaceIndex - 1]) &&
+  !(
+    whitespaceIndex >= 4 && /\w/.test(text[whitespaceIndex - 4]) &&
+    text[whitespaceIndex - 3] === "." && /\w/.test(text[whitespaceIndex - 2])
+  ) &&
+  !(
+    whitespaceIndex >= 3 && /[A-Z]/.test(text[whitespaceIndex - 3]) &&
+    /[a-z]/.test(text[whitespaceIndex - 2]) &&
+    text[whitespaceIndex - 1] === "."
+  );
+
+// Equivalent to splitting on whitespace preceded by punctuation, except after
+// abbreviations like "e.g." or "Dr.", but written without lookbehind because
+// Safari < 16.4 throws on it, crashing the whole bundle at import time.
+export const splitSentences = (text: string): string[] => {
+  const sentences = [];
+  let start = 0;
+  for (let i = 1; i < text.length; i++) {
+    if (/\s/.test(text[i]) && isSentenceBreak(text, i)) {
+      sentences.push(text.slice(start, i));
+      start = i + 1;
+    }
+  }
+  sentences.push(text.slice(start));
+  return sentences;
+};
 
 export const matchesRegexp = (r: RegExp) => (txt: string): boolean =>
   r.test(txt);

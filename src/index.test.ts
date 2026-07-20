@@ -1,5 +1,6 @@
 import { each, type Func } from "gamla";
 import { assertEquals } from "jsr:@std/assert";
+import indexSource from "./index.ts" with { type: "text" };
 import {
   approximateSemanticEquality,
   capitalizedPrefix,
@@ -16,6 +17,7 @@ import {
   secretsInText,
   simplify,
   someKewyordMatches,
+  splitSentences,
   suffixesWithPrefix,
   telegramHandlesInText,
   urlsInText,
@@ -318,3 +320,78 @@ testUnaryFn(
   [`key ${fakeToken} done`, "key [redacted] done"],
   ["nothing to hide here", "nothing to hide here"],
 ]);
+
+// The pre-0.2.5 splitter, kept here as the reference implementation. It relies
+// on lookbehind, which Safari < 16.4 cannot parse.
+const lookbehindSplitSentences = (s: string): string[] =>
+  s.split(/(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=[,!.?:])\s/);
+
+const sentenceSplitInputs = [
+  "Mr. Darcy walked. He talked.",
+  "e.g. this and that. Next sentence.",
+  "Dr. Smith arrived. She left.",
+  "a.b! what now? yes.",
+  "Hello world. How are you? Fine! Great: yes.",
+  "No punctuation at all",
+  "x.y z w.",
+  "Mrs. Baker went home. It was late.",
+  "First.  Double space here.",
+  "End with period.",
+  "U.S. economy grew. Markets rose.",
+  "One... two? three!",
+  "שלום עולם. מה שלומך? טוב!",
+  "",
+  ". ",
+  "a. b. c. d.",
+  "e.g. ",
+  "word.",
+  ...[
+    "Mr.",
+    "e.g.",
+    "a.b",
+    "x!",
+    "Word",
+    "word",
+    ":",
+    "?",
+    ".",
+  ].flatMap((a) =>
+    ["Mr.", "e.g.", "a.b!", "word", "Word.", "x:y"].flatMap((b) => [
+      `${a} ${b}`,
+      `${a} ${b} tail`,
+      `head ${a} ${b}`,
+    ])
+  ),
+];
+
+Deno.test("splitSentences matches the lookbehind-based reference", () => {
+  for (const input of sentenceSplitInputs) {
+    assertEquals(splitSentences(input), lookbehindSplitSentences(input), input);
+  }
+});
+
+testUnaryFn(
+  "hebrew keyword matching with prepositional letter prefixes",
+  someKewyordMatches(["מלך"]),
+)([
+  ["המלך גדול", true],
+  ["ומלך גדול", true],
+  ["אמלך גדול", false],
+  ["מלך", true],
+  ["יש מלך פה", true],
+]);
+
+Deno.test(
+  "lookbehind is confined to negativeLookBehind so Safari < 16.4 can evaluate the module",
+  () => {
+    const lines = indexSource.split("\n");
+    assertEquals(
+      lines.filter((line, i) =>
+        line.includes("(?<") &&
+        !line.includes("negativeLookBehind") &&
+        !(i > 0 && lines[i - 1].includes("negativeLookBehind"))
+      ),
+      [],
+    );
+  },
+);
