@@ -22,7 +22,7 @@ import {
 } from "gamla";
 import { fuzzySearch as fs } from "npm:levenshtein-search@0.1.2";
 import phone from "npm:phone@3.1.59";
-import { englishWords } from "./englishWords.ts";
+import { englishWordsBlob } from "./englishWords.ts";
 import { stopWords } from "./stopWords.ts";
 
 export type FuzzyMatch = { start: number; end: number };
@@ -213,14 +213,16 @@ export const simplify: (x: string) => string = pipe(
   (x: string) => x.trim(),
 );
 
-const allEnglishWordsAsSet = new Set(englishWords);
+let englishWordsSet: Set<string> | undefined;
+const allEnglishWordsAsSet = () =>
+  englishWordsSet ??= new Set(englishWordsBlob.split("\n"));
 
 const fixMissingSpaceInOneWord = (x: string) =>
-  allEnglishWordsAsSet.has(x) ? x : letIn(
+  allEnglishWordsAsSet().has(x) ? x : letIn(
     range(1, x.length - 1).find(
       (index) =>
-        allEnglishWordsAsSet.has(x.slice(0, index)) &&
-        allEnglishWordsAsSet.has(x.slice(index)),
+        allEnglishWordsAsSet().has(x.slice(0, index)) &&
+        allEnglishWordsAsSet().has(x.slice(index)),
     ),
     (location) =>
       location ? [x.slice(0, location), x.slice(location)].join(" ") : x,
@@ -516,7 +518,7 @@ const commonWebTerms = new Set([
 ]);
 
 const isKnownWord = (word: string): boolean =>
-  allEnglishWordsAsSet.has(word) || commonWebTerms.has(word);
+  allEnglishWordsAsSet().has(word) || commonWebTerms.has(word);
 
 // A human-readable slug (e.g. `p2b-social-media-scraper`) is a run of
 // dictionary words joined by separators. Real secrets are random, so their
