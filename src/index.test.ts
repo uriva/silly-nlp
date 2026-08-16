@@ -311,6 +311,20 @@ testUnaryFn(
   [`check https://api.github.com/repos/uriva/silly-nlp/${fakeHex} out`, 0],
   [`site:https://google.com`, 0],
   [`token in url https://x.io/${fakeToken} but ${fakeHex} is bare`, 1],
+  [`token in url x.io/${fakeToken} but ${fakeHex} is bare`, 1],
+  ["פרטים: f0mo.com/event/4620299f61", 0],
+  [
+    '<a href="https://f0mo.com/event/fbf44dc878">פרטים - f0mo.com/event/fbf44dc878</a>',
+    0,
+  ],
+  [
+    "link: view-chat.com/conversation/c629e5f7-ea23-426c-aace-7ebe5e569f24#80320bf5-7a14-4f7c-80cc-8ed698a27b2e",
+    0,
+  ],
+  [
+    "check github.com/uriva/silly-nlp/commit/4abee4e4ac45d3c23134153e4624564aca156ffb",
+    0,
+  ],
 ]);
 
 testUnaryFn(
@@ -319,6 +333,11 @@ testUnaryFn(
 )([
   [`key ${fakeToken} done`, "key [redacted] done"],
   ["nothing to hide here", "nothing to hide here"],
+  ["פרטים: f0mo.com/event/4620299f61", "פרטים: f0mo.com/event/4620299f61"],
+  [
+    '<a href="https://f0mo.com/event/fbf44dc878">פרטים - f0mo.com/event/fbf44dc878</a>',
+    '<a href="https://f0mo.com/event/fbf44dc878">פרטים - f0mo.com/event/fbf44dc878</a>',
+  ],
 ]);
 
 // The pre-0.2.5 splitter, kept here as the reference implementation. It relies

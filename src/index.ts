@@ -556,7 +556,7 @@ export const looksLikeSecret = (token: string): boolean =>
 const tokenPattern = /[A-Za-z0-9_\-+/.~]{20,}={0,2}/g;
 
 const urlSpanPattern =
-  /\b(?:https?:\/\/|ftp:\/\/)[\w.-]+\.[a-z]{2,}(?:\/[\w\-._~:/?#[\]@!$&'()*+,;=%]*)?/gi;
+  /\b(?:(?:(?:https?:\/\/|ftp:\/\/)(?:localhost(?::\d+)?|[\w.-]+\.[a-z]{2,}(?::\d+)?)|(?:www\.[\w.-]+\.[a-z]{2,}(?::\d+)?))(?:[/?#][\w\-._~:/?#[\]@!$&'()*+,;=%]*)?|(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}(?::\d+)?(?:[/?#][\w\-._~:/?#[\]@!$&'()*+,;=%]*))/gi;
 
 const overlaps = (a: FuzzyMatch) => (b: FuzzyMatch) =>
   a.start < b.end && b.start < a.end;
