@@ -345,14 +345,21 @@ const hebrewPrepositionalLetters = "הולב".split("").map((prefix) =>
 ).reduce(regExpOr);
 
 // \b doesn't work for non ascii
-const boundry: RegExp = [
+const startBoundary: RegExp = [
   /[_@.-\s:/[\]?&%$#=*,!()]/,
   /^/,
-  /$/,
   hebrewPrepositionalLetters,
+  allEmojis,
+].reduce(regExpOr);
+
+const endBoundary: RegExp = [
+  /[_@.-\s:/[\]?&%$#=*,!()]/,
+  /$/,
   allEmojis,
   plurality,
 ].reduce(regExpOr);
+
+const boundry = endBoundary;
 
 const speaker = [optional(hyphen), personName, /\s?:/, boundry].reduce(
   concatRegexp,
@@ -412,7 +419,10 @@ export const ngramsOfAtLeastNWords = (n: number) => (s: string): string[] => {
 };
 
 export const wholeWord = ({ source, flags }: RegExp): RegExp =>
-  new RegExp(`(^|${boundry.source})${source}($|${boundry.source})`, flags);
+  new RegExp(
+    `(^|${startBoundary.source})${source}($|${endBoundary.source})`,
+    flags,
+  );
 
 const containsPhrase = (str: string) => (re: RegExp) => re.test(str);
 const strToRegexp = (s: string) => new RegExp(s);

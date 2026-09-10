@@ -41,10 +41,17 @@ testUnaryFn("hebrew kw matching", someKewyordMatches(["בדסמ"]))([
   ["בדסמ🔥", true],
 ]);
 
-testUnaryFn("plurality", someKewyordMatches(["talk"]))([["talks", true], [
-  "talk",
-  true,
-]]);
+testUnaryFn("plurality", someKewyordMatches(["talk"]))([
+  ["talks", true],
+  ["talk", true],
+  ["stalk", false],
+]);
+
+testUnaryFn("plurality not prefix", someKewyordMatches(["port"]))([
+  ["sport", false],
+  ["port", true],
+  ["ports", true],
+]);
 
 testUnaryFn("wholeword", (x) => (wholeWord(/נתי/)).test(x))([
   ["הבנתי", false],
