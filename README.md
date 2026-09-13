@@ -183,20 +183,6 @@ const handles = telegramHandlesInText(
 // ["jonny"] (returns first matched handle)
 ```
 
-### `phonesInText`
-
-Extracts and normalizes valid phone numbers from multiline text, using the
-specified default country code. Returns phone numbers in national/international
-E.164 formats with the leading `+` removed.
-
-```typescript
-import { phonesInText } from "jsr:@uri/silly-nlp";
-
-const extractPhones = phonesInText("IL");
-const phones = extractPhones("054-1234567\nNot a phone: 12345");
-// ["972541234567"]
-```
-
 ### `quotedTexts`
 
 Extracts all text enclosed in double quotes.

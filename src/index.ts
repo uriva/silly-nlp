@@ -1,6 +1,5 @@
 import {
   alljuxt,
-  coerce,
   complement,
   includedIn,
   join,
@@ -20,7 +19,6 @@ import {
   trimWhitespace,
 } from "gamla";
 import { fuzzySearch as fs } from "npm:levenshtein-search@0.1.2";
-import phone from "npm:phone@3.1.59";
 import { stopWords } from "./stopWords.ts";
 
 export type FuzzyMatch = { start: number; end: number };
@@ -475,13 +473,6 @@ export const telegramHandlesInText = (x: string): string[] =>
       /t.me\/(\w{4,})/,
     ).exec(x),
     (match) => match?.[1] ? [match[1]] : [],
-  );
-
-export const phonesInText = (country: string) => (x: string): string[] =>
-  x.split("\n").map((y) => phone.phone(y, { country })).filter(({ isValid }) =>
-    isValid
-  ).map(({ phoneNumber }) => phoneNumber).map((x) =>
-    coerce(x).replace("+", "")
   );
 
 const minSecretLength = 20;
