@@ -294,6 +294,7 @@ testUnaryFn("looksLikeSecret", looksLikeSecret)([
   [fakeToken, true],
   [fakeHex, true],
   ["Ab3-" + fakeToken + "-9Zx", true],
+  ["MIIEpAIBAAKCAQEA0Z3VS5JJcds3xfn/ygWyF", true],
   // natural language / short / low entropy — not secrets
   ["hello", false],
   ["supercalifragilisticexpialidocious", false],

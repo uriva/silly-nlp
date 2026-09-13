@@ -507,6 +507,8 @@ const commonWebTerms = new Set([
   "php",
   "js",
   "css",
+  "google",
+  "site",
 ]);
 
 const isWordLike = (s: string): boolean =>
@@ -522,15 +524,21 @@ const isKnownWord = (word: string): boolean =>
 // dictionary words joined by separators. Real secrets are random, so their
 // separated parts are (almost) never dictionary words. Allowing one non-word
 // segment tolerates prefixes/ids like the `p2b` in `p2b-social-media-scraper`.
-const dictionarySlug = (token: string): boolean =>
-  letIn(
-    token.split(/[-_.:/]+/).filter((s) => s.length > 0),
+const dictionarySlug = (token: string): boolean => {
+  if (token.includes("/") || token.includes("+")) return false;
+  return letIn(
+    token.split(/[-_.:]+/).filter((s) => s.length > 0),
     (segments) =>
       segments.length >= 2 &&
-      segments.filter((s) => isKnownWord(s.toLowerCase()))
-          .length >=
-        segments.length - 1,
+      letIn(
+        segments.filter((s) => isKnownWord(s.toLowerCase())).length,
+        (wordCount) =>
+          segments.length === 2
+            ? wordCount === 2
+            : wordCount >= segments.length - 1,
+      ),
   );
+};
 
 const shannonEntropy = (token: string): number => {
   const counts: Record<string, number> = {};
@@ -546,6 +554,7 @@ const shannonEntropy = (token: string): number => {
 // and character-class variety to be machine-generated rather than prose.
 export const looksLikeSecret = (token: string): boolean =>
   token.length >= minSecretLength &&
+  !token.includes("://") &&
   secretChars.test(token) &&
   !dictionarySlug(token) &&
   (characterClasses(token) >= 2 || /^[0-9a-f]{32,}$/i.test(token)) &&
