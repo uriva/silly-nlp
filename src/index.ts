@@ -225,12 +225,18 @@ export const approximateSemanticEquality = (x: string, y: string): boolean =>
       ySimple: removeNonSemanticDifferences(y),
     },
     ({ xSimple, ySimple }) =>
-      nonempty(
-        fuzzySearch(
-          x.length > y.length ? xSimple : ySimple,
-          x.length < y.length ? xSimple : ySimple,
-          Math.round(0.2 * (x.length < y.length ? xSimple : ySimple).length),
-        ),
+      letIn(
+        xSimple.length >= ySimple.length
+          ? [xSimple, ySimple]
+          : [ySimple, xSimple],
+        ([longer, shorter]) =>
+          nonempty(
+            fuzzySearch(
+              longer,
+              shorter,
+              Math.round(0.2 * shorter.length),
+            ),
+          ),
       ),
   );
 

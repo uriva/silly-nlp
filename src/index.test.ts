@@ -130,6 +130,8 @@ testFn(
   ],
   [["judge dred", "judge dredd"], true],
   [["judge dred", "Judgg Dredd"], true],
+  [["MobLand", "G O R A"], false],
+  [["abcdef", "ghijkl"], false],
   [["a name with more words", "a name"], false],
   [["a name", "a name with more words"], false],
 ]);
