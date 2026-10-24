@@ -308,6 +308,18 @@ testUnaryFn("looksLikeSecret", looksLikeSecret)([
   ["p2b-social-media-scraper", false],
   ["some-long-dashed-package-name", false],
   ["site:https://google.com", false],
+  ["Schreibwaren-Paradies", false],
+  ["Schreibwarenparadies", false],
+  ["Geschwindigkeitsbegrenzung", false],
+  ["Wahrscheinlichkeitstheorie", false],
+  ["Kiyosumi-shirakawa/Monzen-nakacho", false],
+  ["Bachelor/Bachelorette", false],
+  ["Shirts/T-Shirts/Tops", false],
+  ["contactWhatsAppNumber", false],
+  ["Halloumi/Tofu/Paneer", false],
+  ["Bulgarian/Feta/Tzfatit", false],
+  ["Nakano/Koenji/Suginami", false],
+  ["Arashiyama/Kiyomizu-dera", false],
 ]);
 
 testUnaryFn(
@@ -335,6 +347,13 @@ testUnaryFn(
     "check github.com/uriva/silly-nlp/commit/4abee4e4ac45d3c23134153e4624564aca156ffb",
     0,
   ],
+  [
+    "https://shop.super-pharm.co.il/electricity-and-electronics/monitors-and-sound/sound-projectors/מקרן-קול-2-1-כולל-סאבוופר-אלחוטי-Premier-פרימייר-PS622/p/mp-00558025",
+    0,
+  ],
+  ["in einer edlen Steampunk-Atmosphäre – faszinierend", 0],
+  ["das Schreibwaren-Paradies Itoya", 0],
+  ["das Schreibwarenparadies Itoya", 0],
 ]);
 
 testUnaryFn(

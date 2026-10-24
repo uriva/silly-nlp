@@ -510,25 +510,39 @@ const commonWebTerms = new Set([
 
 const isWordLike = (s: string): boolean =>
   s.length >= 2 &&
-  /^[a-z]+$/i.test(s) &&
+  /^[A-Z]?[a-z]+$/.test(s) &&
   /[aeiouy]/i.test(s) &&
-  !/[bcdfghjklmnpqrstvwxz]{5,}/i.test(s);
+  !/[bcdfghjklmnpqrstvwxz]{6,}/i.test(s);
 
 const isKnownWord = (word: string): boolean =>
-  commonWebTerms.has(word) || isWordLike(word);
+  commonWebTerms.has(word.toLowerCase()) || isWordLike(word);
+
+const isCamelCaseIdentifier = (token: string): boolean => {
+  if (!/^[a-zA-Z]+$/.test(token)) return false;
+  const parts = token
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+    .split(" ");
+  return (
+    parts.length >= 2 &&
+    parts.every((p) => /^[A-Z]{2,5}$/.test(p) || isWordLike(p))
+  );
+};
 
 // A human-readable slug (e.g. `p2b-social-media-scraper`) is a run of
 // dictionary words joined by separators. Real secrets are random, so their
 // separated parts are (almost) never dictionary words. Allowing one non-word
 // segment tolerates prefixes/ids like the `p2b` in `p2b-social-media-scraper`.
 const dictionarySlug = (token: string): boolean => {
-  if (token.includes("/") || token.includes("+")) return false;
+  if (token.includes("+")) return false;
+  if (isKnownWord(token) || isCamelCaseIdentifier(token)) return true;
   return letIn(
-    token.split(/[-_.:]+/).filter((s) => s.length > 0),
+    token.split(/[-_.:/]+/).filter((s) => s.length > 0),
     (segments) =>
       segments.length >= 2 &&
       letIn(
-        segments.filter((s) => isKnownWord(s.toLowerCase())).length,
+        segments.filter((s) => isKnownWord(s) || isCamelCaseIdentifier(s))
+          .length,
         (wordCount) =>
           segments.length === 2
             ? wordCount === 2
@@ -559,8 +573,14 @@ export const looksLikeSecret = (token: string): boolean =>
 
 const tokenPattern = /[A-Za-z0-9_\-+/.~]{20,}={0,2}/g;
 
+const nonAsciiLetterOrMark = /[\p{L}\p{M}]/u;
+
+const touchesNonAsciiWord = (text: string, { start, end }: RegExpMatch) =>
+  (start > 0 && nonAsciiLetterOrMark.test(text[start - 1])) ||
+  (end < text.length && nonAsciiLetterOrMark.test(text[end]));
+
 const urlSpanPattern =
-  /\b(?:(?:(?:https?:\/\/|ftp:\/\/)(?:localhost(?::\d+)?|[\w.-]+\.[a-z]{2,}(?::\d+)?)|(?:www\.[\w.-]+\.[a-z]{2,}(?::\d+)?))(?:[/?#][\w\-._~:/?#[\]@!$&'()*+,;=%]*)?|(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}(?::\d+)?(?:[/?#][\w\-._~:/?#[\]@!$&'()*+,;=%]*))/gi;
+  /\b(?:(?:(?:https?:\/\/|ftp:\/\/)(?:localhost(?::\d+)?|[\w.-]+\.[a-z]{2,}(?::\d+)?)|(?:www\.[\w.-]+\.[a-z]{2,}(?::\d+)?))(?:[/?#][^\s<>"']*)?|(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}(?::\d+)?(?:[/?#][^\s<>"']*))/gi;
 
 const overlaps = (a: FuzzyMatch) => (b: FuzzyMatch) =>
   a.start < b.end && b.start < a.end;
@@ -571,6 +591,7 @@ export const secretsInText = (text: string): FuzzyMatch[] =>
     (urls) =>
       regExpLocations(tokenPattern, text).filter((match) =>
         !urls.some(overlaps(match)) &&
+        !touchesNonAsciiWord(text, match) &&
         looksLikeSecret(text.slice(match.start, match.end))
       ),
   );
