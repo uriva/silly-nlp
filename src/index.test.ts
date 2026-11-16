@@ -297,6 +297,7 @@ testUnaryFn("looksLikeSecret", looksLikeSecret)([
   [fakeHex, true],
   ["Ab3-" + fakeToken + "-9Zx", true],
   ["MIIEpAIBAAKCAQEA0Z3VS5JJcds3xfn/ygWyF", true],
+  [["skLive99", "aBcDeFgH", "iJkLmNoP", "qRsTuVwX"].join(""), true],
   // natural language / short / low entropy — not secrets
   ["hello", false],
   ["supercalifragilisticexpialidocious", false],
@@ -316,6 +317,10 @@ testUnaryFn("looksLikeSecret", looksLikeSecret)([
   ["Bachelor/Bachelorette", false],
   ["Shirts/T-Shirts/Tops", false],
   ["contactWhatsAppNumber", false],
+  ["viewOnceMessageV2Extension", false],
+  ["encodeBase64UrlString", false],
+  ["createOAuth2ClientToken", false],
+  ["computeSha256HexDigest", false],
   ["Halloumi/Tofu/Paneer", false],
   ["Bulgarian/Feta/Tzfatit", false],
   ["Nakano/Koenji/Suginami", false],
@@ -366,6 +371,10 @@ testUnaryFn(
   [
     '<a href="https://f0mo.com/event/fbf44dc878">פרטים - f0mo.com/event/fbf44dc878</a>',
     '<a href="https://f0mo.com/event/fbf44dc878">פרטים - f0mo.com/event/fbf44dc878</a>',
+  ],
+  [
+    "Wrapped in viewOnceMessageV2 or viewOnceMessageV2Extension before calling downloadMediaMessage on WhiskeySockets/Baileys.",
+    "Wrapped in viewOnceMessageV2 or viewOnceMessageV2Extension before calling downloadMediaMessage on WhiskeySockets/Baileys.",
   ],
 ]);
 

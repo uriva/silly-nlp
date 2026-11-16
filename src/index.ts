@@ -517,16 +517,27 @@ const isWordLike = (s: string): boolean =>
 const isKnownWord = (word: string): boolean =>
   commonWebTerms.has(word.toLowerCase()) || isWordLike(word);
 
+const isPureCamelWord = (p: string): boolean =>
+  /^[A-Z]{2,5}$/.test(p) || isWordLike(p);
+
+const isAuxCamelPart = (p: string): boolean =>
+  /^[AEIOU]$/.test(p) || /^[A-Za-z]{1,6}\d{1,3}$/.test(p);
+
 const isCamelCaseIdentifier = (token: string): boolean => {
-  if (!/^[a-zA-Z]+$/.test(token)) return false;
+  if (!/^[a-zA-Z][a-zA-Z0-9]*$/.test(token)) return false;
   const parts = token
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
     .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
     .split(" ");
-  return (
-    parts.length >= 2 &&
-    parts.every((p) => /^[A-Z]{2,5}$/.test(p) || isWordLike(p))
-  );
+  if (parts.length < 2) return false;
+  if (parts.every(isPureCamelWord)) return true;
+  if (!parts.every((p) => isPureCamelWord(p) || isAuxCamelPart(p))) {
+    return false;
+  }
+  const pureCount = parts.filter(isPureCamelWord).length;
+  const longWordCount = parts.filter((p) => p.length >= 3 && isWordLike(p))
+    .length;
+  return longWordCount >= 2 && pureCount >= parts.length - 2;
 };
 
 // A human-readable slug (e.g. `p2b-social-media-scraper`) is a run of
