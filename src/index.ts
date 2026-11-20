@@ -514,6 +514,14 @@ const isWordLike = (s: string): boolean =>
   /[aeiouy]/i.test(s) &&
   !/[bcdfghjklmnpqrstvwxz]{6,}/i.test(s);
 
+const isAllCapsWord = (s: string): boolean =>
+  /^[A-Z]{2,5}$/.test(s) ||
+  (s.length >= 2 &&
+    s.length <= 12 &&
+    /^[A-Z]+$/.test(s) &&
+    /[AEIOUY]/.test(s) &&
+    !/[BCDFGHJKLMNPQRSTVWXZ]{5,}/.test(s));
+
 const isKnownWord = (word: string): boolean =>
   commonWebTerms.has(word.toLowerCase()) || isWordLike(word);
 
@@ -540,25 +548,41 @@ const isCamelCaseIdentifier = (token: string): boolean => {
   return longWordCount >= 2 && pureCount >= parts.length - 2;
 };
 
-// A human-readable slug (e.g. `p2b-social-media-scraper`) is a run of
-// dictionary words joined by separators. Real secrets are random, so their
-// separated parts are (almost) never dictionary words. Allowing one non-word
-// segment tolerates prefixes/ids like the `p2b` in `p2b-social-media-scraper`.
+const isSlugWord = (s: string): boolean =>
+  isKnownWord(s) || isAllCapsWord(s) || isCamelCaseIdentifier(s);
+
+const isNumericSegment = (s: string): boolean => /^\d+$/.test(s);
+
+const isUuid = (token: string): boolean =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token);
+
+const isLongRandomSegment = (s: string): boolean =>
+  s.length >= 12 && (characterClasses(s) >= 2 || /^[0-9a-f]{12,}$/i.test(s));
+
+// A human-readable slug (e.g. `p2b-social-media-scraper`,
+// `DEAD_Night_and_the_DEAD_Ruck`, or `call_5481615874592116866`) is a run of
+// dictionary words and/or pure-decimal IDs joined by separators. Real secrets
+// are random, so their separated parts contain high-entropy alphanumeric/hex
+// segments rather than dictionary words or plain decimal counters.
 const dictionarySlug = (token: string): boolean => {
-  if (token.includes("+")) return false;
+  if (token.includes("+") || isUuid(token)) return false;
   if (isKnownWord(token) || isCamelCaseIdentifier(token)) return true;
   return letIn(
     token.split(/[-_.:/]+/).filter((s) => s.length > 0),
-    (segments) =>
-      segments.length >= 2 &&
-      letIn(
-        segments.filter((s) => isKnownWord(s) || isCamelCaseIdentifier(s))
-          .length,
-        (wordCount) =>
-          segments.length === 2
-            ? wordCount === 2
-            : wordCount >= segments.length - 1,
-      ),
+    (segments) => {
+      if (segments.length < 2) return false;
+      const wordCount = segments.filter(isSlugWord).length;
+      if (wordCount === 0) return false;
+      const nonWordOrNumeric = segments.filter(
+        (s) => !isSlugWord(s) && !isNumericSegment(s),
+      );
+      if (nonWordOrNumeric.length === 0) return true;
+      return (
+        wordCount >= 2 &&
+        nonWordOrNumeric.length === 1 &&
+        !isLongRandomSegment(nonWordOrNumeric[0])
+      );
+    },
   );
 };
 

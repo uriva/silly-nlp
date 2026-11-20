@@ -325,6 +325,24 @@ testUnaryFn("looksLikeSecret", looksLikeSecret)([
   ["Bulgarian/Feta/Tzfatit", false],
   ["Nakano/Koenji/Suginami", false],
   ["Arashiyama/Kiyomizu-dera", false],
+  // wiki anchor slugs with repeated ALL-CAPS words are not secrets
+  ["DEAD_Night_and_the_DEAD_Ruck", false],
+  ["The_USA_and_NATO_Summit_Report", false],
+  ["Episode_12_All_DEAD_Attack", false],
+  // word + pure-decimal identifiers (e.g. LLM tool call / scratch pad IDs)
+  ["call_5481615874592116866", false],
+  ["call_17189478162901892897", false],
+  ["summary-1795161954974-1795162027135", false],
+  // real secrets with dashes/underscores must still be caught
+  ["0fee62d3-16cc-4e06-8e88-a88547d668bc", true],
+  ["12345678-1234-4321-8901-abcdefabcdef", true],
+  [
+    ["xoxb", "123456789012", "123456789012", "AbCdEfGhIjKlMnOpQrStUvWx"].join(
+      "-",
+    ),
+    true,
+  ],
+  [["my", "api", "key", fakeToken].join("-"), true],
 ]);
 
 testUnaryFn(
@@ -375,6 +393,14 @@ testUnaryFn(
   [
     "Wrapped in viewOnceMessageV2 or viewOnceMessageV2Extension before calling downloadMediaMessage on WhiskeySockets/Baileys.",
     "Wrapped in viewOnceMessageV2 or viewOnceMessageV2Extension before calling downloadMediaMessage on WhiskeySockets/Baileys.",
+  ],
+  [
+    "[1.8 DEAD Night and the DEAD Ruck](#DEAD_Night_and_the_DEAD_Ruck)",
+    "[1.8 DEAD Night and the DEAD Ruck](#DEAD_Night_and_the_DEAD_Ruck)",
+  ],
+  [
+    'read_scratch_file({"id": "call_5481615874592116866", "grep": "Attack"})',
+    'read_scratch_file({"id": "call_5481615874592116866", "grep": "Attack"})',
   ],
 ]);
 
